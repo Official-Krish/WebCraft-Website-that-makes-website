@@ -6,14 +6,14 @@ import { Input } from "./ui/input"
 
 export function PromptInput() {
   const [prompt, setPrompt] = useState("")
-  const naviagte = useNavigate()
+  const navigate = useNavigate()
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (prompt.trim()) {
-      naviagte(`/generate?prompt=${encodeURIComponent(prompt)}`)
+      navigate('/builder', { state: { prompt } });
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="relative w-full">
