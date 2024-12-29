@@ -11,6 +11,7 @@ const anthropic = new Anthropic();
 
 aiRouter.post("/template", async (req, res) => {
     const prompt = req.body.prompt;
+    
     const response = await anthropic.messages.create({
         messages: [{
             role: 'user', content: prompt
