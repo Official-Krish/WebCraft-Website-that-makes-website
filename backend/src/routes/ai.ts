@@ -23,7 +23,7 @@ aiRouter.post("/template", async (req, res) => {
     const result = await model.generateContent(prompt);
     
     let answer = result.response.text();
-    answer = answer.trim();
+    answer = answer.trim().toLowerCase();
 
     if (answer === "react") {
         res.status(200).json({ 
@@ -45,13 +45,31 @@ aiRouter.post("/template", async (req, res) => {
 });
 
 aiRouter.post("/chat", async (req, res) => {
-    const userPrompt = req.body.prompt || ""; // Ensure prompt is not undefined
-    const prompt = `${userPrompt} ${getSystemPrompt()}`.trim();
-    console.log(prompt)
-    const response = await model.generateContent(prompt);
-    console.log(response.response.text)
+    try {
+        // Ensure the prompt is a string
+        let userPrompt = req.body.prompt || ""; 
+        if (typeof userPrompt !== "string") {
+            userPrompt = JSON.stringify(userPrompt, null, 2);
+        }
 
-    res.status(200).json({ message: response.response.text });
+        // Combine user prompt with system prompt
+        const prompt = `${userPrompt} ${getSystemPrompt()}`.trim();
+
+        // Generate content
+        const response = await model.generateContent(`${prompt} give me proper code`);
+
+        // Safely handle response text
+        const responseText = await response.response.text();
+
+        // Send the response back to the client
+        res.status(200).json({ message: responseText });
+    } catch (error) {
+        console.error("Error in /chat route:", error);
+
+        // Respond with a meaningful error message
+        res.status(500).json({ error: "An error occurred while generating content." });
+    }
 });
+
 
 export default aiRouter;
