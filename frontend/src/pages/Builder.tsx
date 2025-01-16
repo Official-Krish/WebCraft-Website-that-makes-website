@@ -8,7 +8,7 @@ import { PreviewFrame } from '../components/PreviewFrame';
 import { Step, FileItem, StepType } from '../types';
 import axios from 'axios';
 import { BACKEND_URL } from '../config';
-import { parseXml } from '../lib/steps';
+import { parseXml, parseXml2 } from '../lib/steps';
 import { useWebContainer } from '../hooks/useWebContainer';
 import { Loader2 } from 'lucide-react';
 
@@ -90,7 +90,6 @@ export function Builder() {
         
       }))
     }
-    console.log(files);
   }, [steps, files]);
 
   useEffect(() => {
@@ -135,8 +134,6 @@ export function Builder() {
   
     const mountStructure = createMountStructure(files);
   
-    // Mount the structure if WebContainer is available
-    console.log(mountStructure);
     webcontainer?.mount(mountStructure);
   }, [files, webcontainer]);
 
@@ -155,15 +152,13 @@ export function Builder() {
 
     setLoading(true);
     const stepsResponse = await axios.post(`${BACKEND_URL}/ai/chat`, {
-      messages: [...prompts, prompt].map(content => ({
-        role: "user",
+      prompt: [...prompts, prompt].map(content => ({
         content
       }))
     })
 
     setLoading(false);
-
-    setSteps(s => [...s, ...parseXml(stepsResponse.data.response).map(x => ({
+    setSteps(s => [...s, ...parseXml2(stepsResponse.data.message).map(x => ({
       ...x,
       status: "pending" as "pending"
     }))]);
@@ -173,7 +168,7 @@ export function Builder() {
       content
     })));
 
-    setLlmMessages(x => [...x, {role: "assistant", content: stepsResponse.data.response}])
+    setLlmMessages(x => [...x, {role: "assistant", content: stepsResponse.data}])
   }
 
   useEffect(() => {
@@ -219,7 +214,7 @@ export function Builder() {
                       content: stepsResponse.data.response
                     }]);
                     
-                    setSteps(s => [...s, ...parseXml(stepsResponse.data.response).map(x => ({
+                    setSteps(s => [...s, ...parseXml2(stepsResponse.data.message).map(x => ({
                       ...x,
                       status: "pending" as "pending"
                     }))]);
