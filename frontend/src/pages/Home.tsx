@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Code2, Sparkles, Zap } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { AppBar } from "../components/Appbar";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -44,6 +45,7 @@ export default function Home() {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-gray-200">
+      <AppBar />
       {/* Hero Section */}
       <motion.section 
         className="w-full py-12 md:py-24 lg:py-32 xl:py-48 relative overflow-hidden"
