@@ -1,134 +1,98 @@
-import { Linkedin, Github, Mail, Twitter } from "lucide-react";
-import { Button } from "./ui/button";
+import { motion } from "framer-motion";
+import { Github, Twitter, Linkedin } from "lucide-react";
 
-export default function Footer() {
-    return <div>
-        <footer className="w-full border-t border-gray-800 bg-black">
-            <div className="container px-4 md:px-6 py-16 mx-auto">
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-                    {/* Company Info */}
-                    <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-white">Company</h3>
-                        <ul className="space-y-2">
-                            <li>
-                            <a href="/about" className="text-white transition-colors">
-                                About Us
-                            </a>
-                            </li>
-                            <li>
-                            <a href="/careers" className="text-gray-400 hover:text-white transition-colors">
-                                Careers
-                            </a>
-                            </li>
-                            <li>
-                            <a href="/blog" className="text-gray-400 hover:text-white transition-colors">
-                                Blog
-                            </a>
-                            </li>
-                            <li>
-                            <a href="/press" className="text-gray-400 hover:text-white transition-colors">
-                                Press Kit
-                            </a>
-                            </li>
-                        </ul>
-                    </div>
+const gradientText = "bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 text-transparent bg-clip-text";
+const iconHoverEffect = "hover:text-cyan-400 transition-colors duration-300";
 
-                    {/* Resources */}
-                    <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-white">Resources</h3>
-                        <ul className="space-y-2">
-                            <li>
-                            <a href="/docs" className="text-gray-400 hover:text-white transition-colors">
-                                Documentation
-                            </a>
-                            </li>
-                            <li>
-                            <a href="/templates" className="text-gray-400 hover:text-white transition-colors">
-                                Templates
-                            </a>
-                            </li>
-                            <li>
-                            <a href="/guides" className="text-gray-400 hover:text-white transition-colors">
-                                Guides
-                            </a>
-                            </li>
-                            <li>
-                            <a href="/api" className="text-gray-400 hover:text-white transition-colors">
-                                API Reference
-                            </a>
-                            </li>
-                        </ul>
-                    </div>
+export const Footer = () => {
+  const footerSections = [
+    {
+      title: "Product",
+      links: ["Features", "Templates", "Pricing", "Enterprise"]
+    },
+    {
+      title: "Resources",
+      links: ["Documentation", "Guides", "Tutorial", "Blog"]
+    },
+    {
+      title: "Company",
+      links: ["About", "Careers", "Contact", "Partners"]
+    },
+    {
+      title: "Legal",
+      links: ["Privacy", "Terms", "Security", "Cookies"]
+    }
+  ];
 
-                    {/* Legal */}
-                    <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-white">Legal</h3>
-                        <ul className="space-y-2">
-                            <li>
-                            <a href="/privacy" className="text-gray-400 hover:text-white transition-colors">
-                                Privacy Policy
-                            </a>
-                            </li>
-                            <li>
-                            <a href="/terms" className="text-gray-400 hover:text-white transition-colors">
-                                Terms of Service
-                            </a>
-                            </li>
-                            <li>
-                            <a href="/cookies" className="text-gray-400 hover:text-white transition-colors">
-                                Cookie Policy
-                            </a>
-                            </li>
-                            <li>
-                            <a href="/security" className="text-gray-400 hover:text-white transition-colors">
-                                Security
-                            </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    {/* Newsletter */}
-                    <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-white">Stay Updated</h3>
-                        <p className="text-gray-400">Subscribe to our newsletter for the latest updates.</p>
-                        <div className="flex space-x-2">
-                            <input
-                            type="email"
-                            placeholder="Enter your email"
-                            className="flex-1 px-3 py-2 bg-gray-900 border border-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
-                            />
-                            <Button size="sm">Subscribe</Button>
-                        </div>
-                        </div>
-                    </div>
-
-                    {/* Bottom Section */}
-                    <div className="flex flex-col md:flex-row justify-between items-center mt-16 pt-8 border-t border-gray-800">
-                        <p className="text-gray-400 text-sm">
-                        © {new Date().getFullYear()} Your Company. All rights reserved.
-                        </p>
-                        
-                        {/* Social as */}
-                        <div className="flex space-x-6 mt-4 md:mt-0">
-                        <a href="https://github.com" className="text-gray-400 hover:text-white transition-colors">
-                            <Github className="h-5 w-5" />
-                            <span className="sr-only">GitHub</span>
-                        </a>
-                        <a href="https://twitter.com" className="text-gray-400 hover:text-white transition-colors">
-                            <Twitter className="h-5 w-5" />
-                            <span className="sr-only">Twitter</span>
-                        </a>
-                        <a href="https://linkedin.com" className="text-gray-400 hover:text-white transition-colors">
-                            <Linkedin className="h-5 w-5" />
-                            <span className="sr-only">LinkedIn</span>
-                        </a>
-                        <a href="mailto:contact@example.com" className="text-gray-400 hover:text-white transition-colors">
-                            <Mail className="h-5 w-5" />
-                            <span className="sr-only">Email</span>
-                        </a>
-                    </div>
-                </div>
+  return (
+    <footer className="bg-black border-t border-cyan-900/30">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+          {footerSections.map((section) => (
+            <div key={section.title}>
+              <h3 className={`text-lg font-semibold mb-4 ${gradientText}`}>
+                {section.title}
+              </h3>
+              <ul className="space-y-2">
+                {section.links.map((link) => (
+                  <motion.li 
+                    key={link}
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <button className="text-gray-400 hover:text-white transition-colors">
+                      {link}
+                    </button>
+                  </motion.li>
+                ))}
+              </ul>
             </div>
-        </footer>
-    </div>
-} 
+          ))}
+        </div>
+
+        <div className="border-t border-cyan-900/30 pt-8 mt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <motion.div 
+              className="text-xl font-bold"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <span className={gradientText}>AI Web Builder</span>
+            </motion.div>
+
+            <div className="flex space-x-6">
+              <motion.a
+                href="#"
+                className={iconHoverEffect}
+                whileHover={{ scale: 1.2, rotate: 10 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                <Github className="h-6 w-6" />
+              </motion.a>
+              <motion.a
+                href="#"
+                className={iconHoverEffect}
+                whileHover={{ scale: 1.2, rotate: -10 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                <Twitter className="h-6 w-6" />
+              </motion.a>
+              <motion.a
+                href="#"
+                className={iconHoverEffect}
+                whileHover={{ scale: 1.2, rotate: 10 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                <Linkedin className="h-6 w-6" />
+              </motion.a>
+            </div>
+
+            <div className="text-gray-400 text-sm">
+              © 2025 AI Web Builder. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
