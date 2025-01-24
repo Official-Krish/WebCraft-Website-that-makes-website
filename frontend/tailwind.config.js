@@ -16,6 +16,8 @@ export default {
 			brown: '#1a1a18',
 			brown2: '#262626',
 			brown3: '#171717',
+			brown4: '#404040',
+			black2: '#171717',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

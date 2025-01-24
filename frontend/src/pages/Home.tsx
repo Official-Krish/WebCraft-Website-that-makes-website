@@ -3,6 +3,7 @@ import { ArrowRight, Code2, Sparkles, Zap } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { AppBar } from "../components/Appbar";
+import { glowEffect, gradientText } from "../components/lib/constants";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -38,8 +39,6 @@ const featureCardVariants = {
   }
 };
 
-const gradientText = "bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 text-transparent bg-clip-text";
-const glowEffect = "hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-shadow duration-300";
 
 export default function Home() {
   const navigate = useNavigate();
