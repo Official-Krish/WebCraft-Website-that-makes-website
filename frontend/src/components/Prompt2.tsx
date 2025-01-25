@@ -5,6 +5,9 @@ import Export from '../assets/Export.png';
 import { ChooseTemplates, Examples, features, steps } from "./lib/constants";
 import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
+import { Pricing } from "./Pricing";
+import { FAQ } from "./FAQ";
+import { Appbar2 } from "./Appbar2";
 
 export const Prompt2 = () => {
     const [prompt, setPrompt] = useState("");
@@ -19,6 +22,7 @@ export const Prompt2 = () => {
 
     return (
         <div className="bg-brown3">
+            <Appbar2/>
             <div className="min-h-screen bg-brown3 flex flex-col text-center px-4 relative">
                 <div className="mt-24">
                     <h1 className="text-6xl font-extrabold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
@@ -142,13 +146,13 @@ export const Prompt2 = () => {
                         {features.map((feature, index) => (
                             <div
                                 key={index}
-                                className="bg-brown2 p-6 rounded-xl shadow-lg transition delay-150 duration-300 ease-out hover:-translate-y-1 hover:scale-110"
+                                className="bg-brown2 p-7 rounded-xl shadow-lg transition delay-150 duration-300 ease-out hover:-translate-y-1 hover:scale-110"
                             >
                                 <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-2xl rounded-lg">
                                     {typeof feature.icon === 'string' ? feature.icon : <feature.icon />}
                                 </div>
-                                <div className="mt-2">
-                                    <h3 className="text-lg font-semibold text-white">{feature.title}</h3>
+                                <div className="mt-4">
+                                    <h3 className="text-xl font-semibold text-white">{feature.title}</h3>
                                     <p className="text-gray-400 mt-2 max-w-[320px]">{feature.description}</p>
                                 </div>
                             </div>
@@ -224,6 +228,32 @@ export const Prompt2 = () => {
                     </button>
                 </div>
             </div>
+
+            <div className="bg-brown2 min-h-[90vh]">
+                <div className="flex flex-col items-center justify-center p-4">
+                    <h1 className="text-white text-4xl font-semibold mt-14">
+                        Pricing that fits your vision
+                    </h1>
+                    <a className="text-gray-400 text-md font-medium max-w-xl py-4">
+                        Unlock the power of AI-driven web design with plans tailored for everyone
+                    </a>
+                    <Pricing />
+                </div>
+            </div>
+            
+            <div className="bg-brown min-h-[70vh]">
+                <div className="flex flex-col items-center justify-center p-4">
+                    <h1 className="text-white text-4xl font-semibold mt-14">
+                        Frequently Asked Questions
+                    </h1>
+                    <a className="text-gray-400 text-md font-medium max-w-xl py-4">
+                        Answers to some of the Most Important Questions
+                    </a>
+                </div>
+                <div className="mx-60 my-14">
+                    <FAQ/>
+                </div>
+            </div>  
         </div>
     );
 };

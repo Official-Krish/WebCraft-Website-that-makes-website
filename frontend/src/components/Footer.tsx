@@ -57,7 +57,7 @@ export const Footer = () => {
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400 }}
             >
-              <span className={gradientText}>AI Web Builder</span>
+              <span className={gradientText}>Pixlr</span>
             </motion.div>
 
             <div className="flex space-x-6">
@@ -88,7 +88,7 @@ export const Footer = () => {
             </div>
 
             <div className="text-gray-400 text-sm">
-              © 2025 AI Web Builder. All rights reserved.
+              © 2025 Pixlr. All rights reserved.
             </div>
           </div>
         </div>
