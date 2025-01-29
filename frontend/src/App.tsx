@@ -8,9 +8,9 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/builder" element={<Builder />} />
-          <Route path="/create" element={<Prompt2 />} />
+          <Route path="/" element={<Prompt2 />} />
         </Routes>
       </BrowserRouter>
     </>

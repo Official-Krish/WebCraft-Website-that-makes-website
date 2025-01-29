@@ -6,7 +6,7 @@ export const Appbar2 = () => {
     return <div className="bg-brown3 flex justify-around items-center p-3 shadow-lg border-b-2 border-brown2">
         <div className="flex">
             <img src={Logo} className="h-12 w-auto rounded-full pr-2" />
-            <button className="bg-gradient-to-r from-purple-500 to-blue-500 text-3xl font-bold text-transparent bg-clip-text" onClick={() => navigate("/")}
+            <button className="bg-gradient-to-r from-purple-500 to-blue-500 text-3xl font-bold text-transparent bg-clip-text" onClick={() => navigate("/home")}
                 >
                 Pixlr
             </button>
