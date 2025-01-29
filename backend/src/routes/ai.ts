@@ -7,7 +7,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const aiRouter = Router();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "");
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" , systemInstruction: getSystemPrompt() });
 
 aiRouter.post("/template", async (req, res) => {
     const prompt = req.body.prompt + "Return either react or node based on what do you think this project should be. Only return a single word response, either react or node. Do not return anything else.";
@@ -53,7 +53,7 @@ aiRouter.post("/chat", async (req, res) => {
         }
 
         // Combine user prompt with system prompt
-        const prompt = `${userPrompt} ${getSystemPrompt()}`.trim();
+        const prompt = `${userPrompt}`.trim();
 
         // Generate content
         const response = await model.generateContent(`${prompt} give me proper code`);
