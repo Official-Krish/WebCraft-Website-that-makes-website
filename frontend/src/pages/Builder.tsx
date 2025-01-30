@@ -264,7 +264,6 @@
 //   );
 // }
 
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { StepsList } from '../components/StepsList';
@@ -278,7 +277,8 @@ import { BACKEND_URL } from '../config';
 import { parseXml, parseXml2 } from '../lib/steps';
 import { useWebContainer } from '../hooks/useWebContainer';
 import { Loader2 } from 'lucide-react';
-import { Chatbox } from '../components/chatbox';
+import { Chatbox } from "../components/chatbox";
+import { testing } from '../components/lib/constants';
 
 export function Builder() {
   const location = useLocation();
@@ -422,7 +422,7 @@ export function Builder() {
     setLoading(false);
     setSteps((s) => [
       ...s,
-      ...parseXml2(stepsResponse.data.message).map((x) => ({
+      ...parseXml(testing).map((x) => ({
         ...x,
         status: "pending" as "pending",
       })),
@@ -437,7 +437,7 @@ export function Builder() {
 
     setLlmMessages((x) => [
       ...x,
-      { role: "assistant", content: stepsResponse.data },
+      { role: "assistant", content: testing },
     ]);
   }
 
@@ -446,32 +446,16 @@ export function Builder() {
   }, []);
 
   // Handle component-specific editing
-  const handleComponentEdit = async (componentName: string, userRequest: string) => {
-    const newMessage = {
-      role: "user" as const,
-      content: `Modify the ${componentName} component: ${userRequest}`,
-    };
+  const handleApplyChanges = async (componentName: string, updatedCode: string) => {
+    // Update the file in the WebContainer
+    const filePath = `/src/components/${componentName}.jsx`; // Adjust the path as needed
+    await webcontainer?.fs.writeFile(filePath, updatedCode);
 
-    setLoading(true);
-    const response = await axios.post(`${BACKEND_URL}/ai/chat`, {
-      messages: [...llmMessages, newMessage],
-    });
-    setLoading(false);
-
-    // Parse the response and apply changes
-    const updatedCode = response.data.message; // Assuming the LLM returns the updated code
-    setFiles((prevFiles) =>
-      prevFiles.map((file) =>
-        file.name === componentName ? { ...file, content: updatedCode } : file
-      )
-    );
-
-    // Update chat history
-    setLlmMessages((x) => [
-      ...x,
-      newMessage,
-      { role: "assistant", content: response.data.message },
-    ]);
+    // Reload the iframe
+    const iframe = document.querySelector('iframe');
+    if (iframe) {
+      iframe.src = iframe.src; // Reload the iframe
+    }
   };
 
   return (
@@ -555,7 +539,9 @@ export function Builder() {
               <Chatbox
                 componentName={hoveredComponent}
                 onClose={() => setHoveredComponent(null)}
-                handleComponentEdit={handleComponentEdit}
+                onApplyChanges={(updatedCode) => {
+                  handleApplyChanges(hoveredComponent, updatedCode);
+                }}
               />
             )}
           </div>
