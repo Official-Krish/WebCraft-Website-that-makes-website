@@ -234,7 +234,7 @@ export default function App() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4" data-component="app">
+    <div className="bg-neutral-100 min-h-screen w-full" data-component="app">
       <h1 className="text-2xl font-bold mb-4 text-center" data-component="title">Todo App</h1>
       <TodoForm addTodo={addTodo} />
       <TodoList todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />

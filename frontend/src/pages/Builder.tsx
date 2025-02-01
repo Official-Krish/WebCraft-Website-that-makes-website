@@ -276,9 +276,10 @@ import axios from 'axios';
 import { BACKEND_URL } from '../config';
 import { parseXml, parseXml2 } from '../lib/steps';
 import { useWebContainer } from '../hooks/useWebContainer';
-import { Loader2 } from 'lucide-react';
+import { MoveRight } from 'lucide-react';
 import { Chatbox } from "../components/chatbox";
-import { testing } from '../components/lib/constants';
+import { useNavigate } from "react-router-dom";
+import Logo from '../assets/Logo.png';
 
 export function Builder() {
   const location = useLocation();
@@ -287,7 +288,9 @@ export function Builder() {
   const [llmMessages, setLlmMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [templateSet, setTemplateSet] = useState(false);
+  const [fileLoaded, setFilesLoaded] = useState(false);
   const webcontainer = useWebContainer();
+  const navigate = useNavigate();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
@@ -422,7 +425,7 @@ export function Builder() {
     setLoading(false);
     setSteps((s) => [
       ...s,
-      ...parseXml(testing).map((x) => ({
+      ...parseXml(stepsResponse.data.message).map((x) => ({
         ...x,
         status: "pending" as "pending",
       })),
@@ -437,8 +440,9 @@ export function Builder() {
 
     setLlmMessages((x) => [
       ...x,
-      { role: "assistant", content: testing },
+      { role: "assistant", content: stepsResponse.data.response },
     ]);
+    setFilesLoaded(true);
   }
 
   useEffect(() => {
@@ -448,7 +452,7 @@ export function Builder() {
   // Handle component-specific editing
   const handleApplyChanges = async (componentName: string, updatedCode: string) => {
     // Update the file in the WebContainer
-    const filePath = `/src/components/${componentName}.jsx`; // Adjust the path as needed
+    const filePath = `/src/components/${componentName}.tsx`; // Adjust the path as needed
     await webcontainer?.fs.writeFile(filePath, updatedCode);
 
     // Reload the iframe
@@ -458,95 +462,118 @@ export function Builder() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-900 flex flex-col">
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full grid grid-cols-4 gap-6 p-6">
-          <div className="col-span-1 space-y-6 overflow-auto">
-            <div>
-              <div className="max-h-[75vh] overflow-scroll">
-                <StepsList
-                  steps={steps}
-                  currentStep={currentStep}
-                  onStepClick={setCurrentStep}
-                />
-              </div>
+  return <div className='min-h-screen'>
+    <div className="bg-brown3 flex justify-around items-center shadow-lg border-b-2 border-brown2">
+        <div className="flex">
+          <img src={Logo} className="h-8 w-auto rounded-full pr-2" />
+          <button className="bg-gradient-to-r from-purple-500 to-blue-500 text-3xl font-bold text-transparent bg-clip-text" onClick={() => navigate("/home")}
+              >
+              Pixlr
+          </button>
+        </div>
+        <div className="flex justify-between text-gray-400 text-md font-medium space-x-10">
+          {prompt.split(" ")
+            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" ")
+          }
+        </div>
+        <div className='mt-4'>
+          <TabView activeTab={activeTab} onTabChange={setActiveTab} />
+        </div>
+    </div>
+    <div className="min-h-screen bg-brown3 min-w-screen">
+      {activeTab === "preview" && 
+        <PreviewFrame
+        webContainer={webcontainer!}
+        files={files}
+        onComponentHover={setHoveredComponent}
+        />
+      }
+
+      {activeTab === "code" && hoveredComponent &&
+        <Chatbox
+          componentName={hoveredComponent}
+          onClose={() => setHoveredComponent(null)}
+          onApplyChanges={(updatedCode) => {
+            handleApplyChanges(hoveredComponent, updatedCode);
+          }}
+        />
+      }
+
+      {activeTab === "code" &&
+        <div className={`${fileLoaded ? "flex-1 overflow-hidden pl-8": ""}`}>
+          <div className={`${fileLoaded ? "h-full grid grid-cols-4 gap-6 p-6" : ""}`}>
+            <div className={`${fileLoaded ? "col-span-1 space-y-6 overflow-auto" : "flex justify-center items-center min-h-screen mt-[-10px]"}`}>
               <div>
-                <div className="flex">
+                <div className="max-h-[70vh] overflow-scroll">
+                  <StepsList
+                    steps={steps}
+                    currentStep={currentStep}
+                    onStepClick={setCurrentStep}
+                    filesLoaded={fileLoaded}
+                  />
+                </div>
+                <div>
                   <br />
-                  {(loading || !templateSet) && <Loader2 className="text-white animate-spin" />}
                   {!(loading || !templateSet) && (
-                    <div className="flex">
-                      <textarea
+                    <div className="flex items-center bg-black p-2 rounded-lg w-full max-w-lg border border-gray-700">
+                      <input
                         value={userPrompt}
+                        placeholder="How can Pixlr help you today?"
                         onChange={(e) => setPrompt(e.target.value)}
-                        className="p-2 w-full"
+                        className="bg-transparent text-white placeholder-gray-400 flex-1 outline-none px-2 h-full overflow-y-scroll"
                       />
-                      <button
-                        onClick={async () => {
-                          const newMessage = {
-                            role: "user" as "user",
-                            content: userPrompt,
-                          };
+                      {userPrompt.length > 0 &&
+                        <button
+                          className="bg-blue-600 hover:bg-blue-700 text-white p-1 rounded-lg"
+                          onClick={async () => {
+                            const newMessage = {
+                              role: "user" as "user",
+                              content: userPrompt,
+                            };
 
-                          setLoading(true);
-                          const stepsResponse = await axios.post(`${BACKEND_URL}/chat`, {
-                            messages: [...llmMessages, newMessage],
-                          });
-                          setLoading(false);
+                            setLoading(true);
+                            const stepsResponse = await axios.post(`${BACKEND_URL}/chat`, {
+                              messages: [...llmMessages, newMessage],
+                            });
+                            setLoading(false);
 
-                          setLlmMessages((x) => [...x, newMessage]);
-                          setLlmMessages((x) => [
-                            ...x,
-                            { role: "assistant", content: stepsResponse.data.response },
-                          ]);
-
-                          setSteps((s) => [
-                            ...s,
-                            ...parseXml2(stepsResponse.data.message).map((x) => ({
+                            setLlmMessages((x) => [...x, newMessage]);
+                            setLlmMessages((x) => [
                               ...x,
-                              status: "pending" as "pending",
-                            })),
-                          ]);
-                        }}
-                        className="bg-purple-400 px-4"
-                      >
-                        Send
-                      </button>
+                              { role: "assistant", content: stepsResponse.data.response },
+                            ]);
+
+                            setSteps((s) => [
+                              ...s,
+                              ...parseXml2(stepsResponse.data.message).map((x) => ({
+                                ...x,
+                                status: "pending" as "pending",
+                              })),
+                            ]);
+                          }}
+                        >
+                          {<MoveRight className="w-4 h-4" />}
+                        </button>
+                      }
                     </div>
                   )}
                 </div>
               </div>
             </div>
-          </div>
-          <div className="col-span-1">
-            <FileExplorer files={files} onFileSelect={setSelectedFile} />
-          </div>
-          <div className="col-span-2 bg-gray-900 rounded-lg shadow-lg p-4 h-[calc(100vh-8rem)]">
-            <TabView activeTab={activeTab} onTabChange={setActiveTab} />
-            <div className="h-[calc(100%-4rem)]">
-              {activeTab === 'code' ? (
-                <CodeEditor file={selectedFile} />
-              ) : (
-                <PreviewFrame
-                  webContainer={webcontainer!}
-                  files={files}
-                  onComponentHover={setHoveredComponent}
-                />
-              )}
-            </div>
-            {hoveredComponent && (
-              <Chatbox
-                componentName={hoveredComponent}
-                onClose={() => setHoveredComponent(null)}
-                onApplyChanges={(updatedCode) => {
-                  handleApplyChanges(hoveredComponent, updatedCode);
-                }}
-              />
-            )}
+            {fileLoaded && 
+              <div className='flex ml-16'>
+                <div className='w-full min-w-[300px]'>
+                  <FileExplorer files={files} onFileSelect={setSelectedFile} />
+                </div>
+                <div className=" bg-brown2 p-4 min-w-[650px]">
+                  <CodeEditor file={selectedFile} />
+                </div>
+              </div>
+            }
           </div>
         </div>
-      </div>
+      }
     </div>
-  );
+  </div>
 }

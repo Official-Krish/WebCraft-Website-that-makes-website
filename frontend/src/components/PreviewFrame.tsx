@@ -158,6 +158,7 @@
 //   );
 // }
 
+import { LoaderCircle } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 
 interface PreviewFrameProps {
@@ -319,28 +320,26 @@ export function PreviewFrame({ webContainer, onComponentHover }: PreviewFramePro
   };
 
   return (
-    <div className="h-full flex items-center justify-center text-gray-400 relative">
-      {!url && <p>Loading...</p>}
-      {url && (
-        <>
-          <iframe
-            ref={iframeRef}
-            width="100%"
-            height="100%"
-            src={url}
-            onLoad={() => {
-              console.log("Iframe onLoad triggered");
-              setTimeout(injectScript, 100); // Give a small delay after load
-            }}
-            sandbox="allow-same-origin allow-scripts allow-forms"
-          />
-          {!isScriptInjected && (
-            <div className="absolute bottom-4 left-4 bg-yellow-100 text-yellow-800 px-4 py-2 rounded">
-              Initializing hover detection...
-            </div>
-          )}
-        </>
-      )}
+    <div className='min-h-screen'>
+      {!url && <div className='flex items-center justify-center min-h-screen'>
+          <LoaderCircle className="animate-spin text-white h-10 w-10" />
+        </div>
+      }
+      <iframe
+        ref={iframeRef}
+        className='min-h-screen w-full'
+        src={url}
+        onLoad={() => {
+          console.log("Iframe onLoad triggered");
+          setTimeout(injectScript, 100); // Give a small delay after load
+        }}
+        sandbox="allow-same-origin allow-scripts allow-forms"
+      />
+      {/* {!isScriptInjected && (
+        <div className="absolute bottom-4 left-4 bg-yellow-100 text-yellow-800 px-4 py-2 rounded">
+          Initializing hover detection...
+        </div>
+      )} */}
     </div>
   );
 }
