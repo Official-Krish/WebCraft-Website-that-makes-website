@@ -333,7 +333,6 @@ export function PreviewFrame({ webContainer, onComponentHover }: PreviewFramePro
           console.log("Iframe onLoad triggered");
           setTimeout(injectScript, 100); // Give a small delay after load
         }}
-        sandbox="allow-same-origin allow-scripts allow-forms"
       />
       {/* {!isScriptInjected && (
         <div className="absolute bottom-4 left-4 bg-yellow-100 text-yellow-800 px-4 py-2 rounded">

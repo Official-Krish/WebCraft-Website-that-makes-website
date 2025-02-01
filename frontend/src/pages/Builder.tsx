@@ -280,12 +280,13 @@ import { MoveRight } from 'lucide-react';
 import { Chatbox } from "../components/chatbox";
 import { useNavigate } from "react-router-dom";
 import Logo from '../assets/Logo.png';
+import { TerminalComponent } from '../components/Terminal';
 
 export function Builder() {
   const location = useLocation();
   const { prompt } = location.state as { prompt: string };
   const [userPrompt, setPrompt] = useState("");
-  const [llmMessages, setLlmMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const [llmMessages, setLlmMessages] = useState<{ content: string; }[]>([]);
   const [loading, setLoading] = useState(false);
   const [templateSet, setTemplateSet] = useState(false);
   const [fileLoaded, setFilesLoaded] = useState(false);
@@ -293,7 +294,7 @@ export function Builder() {
   const navigate = useNavigate();
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
+  const [activeTab, setActiveTab] = useState<'code' | 'preview'>('preview');
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
   const [steps, setSteps] = useState<Step[]>([]);
   const [files, setFiles] = useState<FileItem[]>([]);
@@ -425,7 +426,7 @@ export function Builder() {
     setLoading(false);
     setSteps((s) => [
       ...s,
-      ...parseXml(stepsResponse.data.message).map((x) => ({
+      ...parseXml2(stepsResponse.data.message).map((x) => ({
         ...x,
         status: "pending" as "pending",
       })),
@@ -433,14 +434,13 @@ export function Builder() {
 
     setLlmMessages(
       [...prompts, prompt].map((content) => ({
-        role: "user",
         content,
       }))
     );
 
     setLlmMessages((x) => [
       ...x,
-      { role: "assistant", content: stepsResponse.data.response },
+      { content: stepsResponse.data.response },
     ]);
     setFilesLoaded(true);
   }
@@ -501,11 +501,11 @@ export function Builder() {
       }
 
       {activeTab === "code" &&
-        <div className={`${fileLoaded ? "flex-1 overflow-hidden pl-8": ""}`}>
-          <div className={`${fileLoaded ? "h-full grid grid-cols-4 gap-6 p-6" : ""}`}>
-            <div className={`${fileLoaded ? "col-span-1 space-y-6 overflow-auto" : "flex justify-center items-center min-h-screen mt-[-10px]"}`}>
+        <div className={`${fileLoaded ? "flex-1 overflow-hidden pl-8 ": ""}`}>
+          <div className={`${fileLoaded ? "h-full grid grid-cols-4 gap-6 p-4" : ""}`}>
+            <div className={`${fileLoaded ? "col-span-1 space-y-3 overflow-auto" : "flex justify-center items-center min-h-screen mt-[-10px]"}`}>
               <div>
-                <div className="max-h-[70vh] overflow-scroll">
+                <div className="max-h-[70vh] overflow-scroll border border-brown4 rounded-lg">
                   <StepsList
                     steps={steps}
                     currentStep={currentStep}
@@ -516,7 +516,7 @@ export function Builder() {
                 <div>
                   <br />
                   {!(loading || !templateSet) && (
-                    <div className="flex items-center bg-black p-2 rounded-lg w-full max-w-lg border border-gray-700">
+                    <div className="flex items-center bg-brown p-2 rounded-lg w-full max-w-lg border border-brown4 h-[120px]">
                       <input
                         value={userPrompt}
                         placeholder="How can Pixlr help you today?"
@@ -528,20 +528,19 @@ export function Builder() {
                           className="bg-blue-600 hover:bg-blue-700 text-white p-1 rounded-lg"
                           onClick={async () => {
                             const newMessage = {
-                              role: "user" as "user",
                               content: userPrompt,
                             };
 
                             setLoading(true);
-                            const stepsResponse = await axios.post(`${BACKEND_URL}/chat`, {
-                              messages: [...llmMessages, newMessage],
+                            const stepsResponse = await axios.post(`${BACKEND_URL}/ai/chat`, {
+                              prompt: [...llmMessages, newMessage],
                             });
                             setLoading(false);
 
                             setLlmMessages((x) => [...x, newMessage]);
                             setLlmMessages((x) => [
                               ...x,
-                              { role: "assistant", content: stepsResponse.data.response },
+                              { content: stepsResponse.data.response },
                             ]);
 
                             setSteps((s) => [
@@ -562,12 +561,17 @@ export function Builder() {
               </div>
             </div>
             {fileLoaded && 
-              <div className='flex ml-16'>
-                <div className='w-full min-w-[300px]'>
-                  <FileExplorer files={files} onFileSelect={setSelectedFile} />
+              <div>
+                <div className='flex ml-16'>
+                  <div className='w-full min-w-[300px] h-[calc(100vh-15rem)] border border-brown4'>
+                    <FileExplorer files={files} onFileSelect={setSelectedFile} />
+                  </div>
+                  <div className=" bg-brown2 p-4 min-w-[650px] h-[calc(100vh-15rem)] border border-brown4">
+                    <CodeEditor file={selectedFile} />
+                  </div>
                 </div>
-                <div className=" bg-brown2 p-4 min-w-[650px]">
-                  <CodeEditor file={selectedFile} />
+                <div className='ml-16'>
+                  <TerminalComponent webcontainer={webcontainer!} />
                 </div>
               </div>
             }
