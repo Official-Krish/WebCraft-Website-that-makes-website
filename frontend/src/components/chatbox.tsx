@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { BACKEND_URL } from '../config';
 
 interface ChatboxProps {
   componentName: string;
+  llmMessages: any;
   onClose: () => void;
   onApplyChanges: (updatedCode: string) => void;
 }
 
-export function Chatbox({ componentName, onClose, onApplyChanges }: ChatboxProps) {
+export function Chatbox({ componentName, onClose, onApplyChanges, llmMessages }: ChatboxProps) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -15,15 +17,18 @@ export function Chatbox({ componentName, onClose, onApplyChanges }: ChatboxProps
     setLoading(true);
 
     // Send the modification request to the LLM
-    const response = await axios.post('/api/chat', {
-      component: componentName,
-      prompt: message
+    const newMessage = {
+      content: 'Componet Name: ' + componentName + '\n' + message,
+    };
+    const response = await axios.post(`${BACKEND_URL}/ai/chat`, {
+      prompt: [...llmMessages, newMessage],
     });
 
     setLoading(false);
 
     // Apply the updated code
-    onApplyChanges(response.data.updatedCode);
+    console.log("Response:", response.data.message);
+    onApplyChanges(response.data.message);
   }
 
   return (
