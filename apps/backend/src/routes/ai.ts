@@ -4,7 +4,7 @@ import { basePrompt as reactBasePrompt } from "../defaults/react-base";
 import { basePrompt as nodeBasePrompt } from "../defaults/node-base";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const aiRouter = Router();
+const aiRouter: Router = Router();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" , systemInstruction: getSystemPrompt() });

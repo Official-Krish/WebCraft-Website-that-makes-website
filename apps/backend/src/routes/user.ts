@@ -1,12 +1,12 @@
 require("dotenv").config();
 import { Router } from "express";
 import bcrypt from "bcrypt";
-import prisma from "../utils/db";
+import { prisma } from "../utils/db";
 import jwt from "jsonwebtoken";
 import { LoginSchema, SignupSchema } from "../types/userSchema";
 import axios from "axios";
 
-const userRouter = Router();
+const userRouter: Router = Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || "mysecret";
 
