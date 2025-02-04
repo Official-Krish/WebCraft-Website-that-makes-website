@@ -7,7 +7,6 @@ import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { Pricing } from "./Pricing";
 import { FAQ } from "./FAQ";
-import { Appbar2 } from "./Appbar2";
 
 export const Prompt2 = () => {
     const [prompt, setPrompt] = useState("");
@@ -22,7 +21,6 @@ export const Prompt2 = () => {
 
     return (
         <div className="bg-brown3">
-            <Appbar2/>
             <div className="min-h-screen bg-brown3 flex flex-col text-center px-4 relative">
                 <div className="mt-24">
                     <h1 className="text-6xl font-extrabold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">

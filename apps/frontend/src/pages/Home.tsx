@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { ArrowRight, Code2, Sparkles, Zap } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { AppBar } from "../components/Appbar";
 import { glowEffect, gradientText } from "../components/lib/constants";
 
 const fadeIn = {
@@ -44,7 +43,6 @@ export default function Home() {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-gray-200">
-      <AppBar />
       {/* Hero Section */}
       <motion.section 
         className="w-full py-12 md:py-24 lg:py-32 xl:py-48 relative overflow-hidden"
@@ -93,7 +91,7 @@ export default function Home() {
             >
               <Button 
                 size="lg" 
-                onClick={() => navigate('/create')} 
+                onClick={() => navigate('/prompt')} 
                 className={`group bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 ${glowEffect}`}
               >
                 Start Creating 

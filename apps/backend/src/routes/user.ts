@@ -17,7 +17,7 @@ userRouter.post("/signup", async ( req,res ) => {
         return res.status(400).json({ message: "Invalid request body" });
     }
 
-    const { email, password } = parsedData.data;
+    const { email, password, name } = parsedData.data;
 
     if (!email || !password) {
         return res.status(400).json({ message: "Email and password are required" });
@@ -33,11 +33,12 @@ userRouter.post("/signup", async ( req,res ) => {
         const user = await prisma.user.create({ 
         data: { 
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            name: name
         }
     });
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user.id, name: name }, JWT_SECRET, { expiresIn: "1h" });
     res.cookie('token', token);
     res.status(200).json({ message: "User created successfully", token });
     } catch (error) {
@@ -72,29 +73,8 @@ userRouter.post("/login", async ( req,res ) => {
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });
     res.cookie('token', token);
-    res.status(200).json({ message: "User logged in successfully", user, token });
+    res.status(200).json({ message: "User logged in successfully", token });
 })
 
-userRouter.get("/proxy", async (req, res) => {
-    const targetUrl = req.query.url as string; // URL to fetch content from
-    console.log("Target URL:", targetUrl);
-
-  if (!targetUrl) {
-    return res.status(400).send('URL parameter is required');
-  }
-
-  try {
-    // Fetch content from the target URL
-    const response = await axios.get(targetUrl, {
-      responseType: 'text', // Ensure the response is treated as text
-    });
-    console.log('Response:', response.data);
-    // Return the content to the frontend
-    res.send(response.data);
-  } catch (error) {
-    console.error('Proxy error:', error);
-    res.status(500).send('Error fetching content');
-  }
-})
 
 export default userRouter;
