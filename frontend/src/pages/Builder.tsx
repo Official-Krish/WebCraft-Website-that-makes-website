@@ -15,7 +15,6 @@ import { Chatbox } from "../components/chatbox";
 import { useNavigate } from "react-router-dom";
 import Logo from '../assets/Logo.png';
 import { TerminalComponent } from '../components/Terminal';
-import { testing } from '../components/lib/constants';
 
 export function Builder() {
   const location = useLocation();
@@ -161,7 +160,7 @@ export function Builder() {
     setLoading(false);
     setSteps((s) => [
       ...s,
-      ...parseXml(testing).map((x) => ({
+      ...parseXml2(stepsResponse.data.message).map((x) => ({
         ...x,
         status: "pending" as "pending",
       })),
@@ -175,7 +174,7 @@ export function Builder() {
 
     setLlmMessages((x) => [
       ...x,
-      { content: testing },
+      { content: stepsResponse.data.message },
     ]);
     setFilesLoaded(true);
   }

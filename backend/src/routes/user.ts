@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import prisma from "../utils/db";
 import jwt from "jsonwebtoken";
 import { LoginSchema, SignupSchema } from "../types/userSchema";
+import axios from "axios";
 
 const userRouter = Router();
 
@@ -72,6 +73,28 @@ userRouter.post("/login", async ( req,res ) => {
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });
     res.cookie('token', token);
     res.status(200).json({ message: "User logged in successfully", user, token });
+})
+
+userRouter.get("/proxy", async (req, res) => {
+    const targetUrl = req.query.url as string; // URL to fetch content from
+    console.log("Target URL:", targetUrl);
+
+  if (!targetUrl) {
+    return res.status(400).send('URL parameter is required');
+  }
+
+  try {
+    // Fetch content from the target URL
+    const response = await axios.get(targetUrl, {
+      responseType: 'text', // Ensure the response is treated as text
+    });
+    console.log('Response:', response.data);
+    // Return the content to the frontend
+    res.send(response.data);
+  } catch (error) {
+    console.error('Proxy error:', error);
+    res.status(500).send('Error fetching content');
+  }
 })
 
 export default userRouter;

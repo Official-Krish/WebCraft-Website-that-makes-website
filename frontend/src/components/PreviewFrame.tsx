@@ -47,7 +47,7 @@ export function PreviewFrame({ webContainer, onComponentHover }: PreviewFramePro
     await webContainer.spawn("npm", ["run", "dev"]);
 
     webContainer.on("server-ready", (port: number, url: string) => {
-      console.log("WebContainer URL:", url);
+      console.log("WebContainer URL:", url, port);
       setUrl(url);
     });
   }
