@@ -1,0 +1,1 @@
+{"root":["./src/index.ts","./src/defaults/node-base.ts","./src/defaults/react-base.ts","./src/routes/ai.ts","./src/routes/user.ts","./src/types/userschema.ts","./src/utils/constants.ts","./src/utils/db.ts","./src/utils/middleware.ts","./src/utils/prompts.ts","./src/utils/stripindents.ts"],"version":"5.7.3"}
