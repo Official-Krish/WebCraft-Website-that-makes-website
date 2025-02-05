@@ -23,7 +23,7 @@ userRouter.post("/signup", async ( req,res ) => {
         return res.status(400).json({ message: "Email and password are required" });
     }
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findFirst({ where: { email } });
     if (existingUser) {
         return res.status(400).json({ message: "User already exists" });
     }
@@ -73,7 +73,7 @@ userRouter.post("/login", async ( req,res ) => {
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });
     res.cookie('token', token);
-    res.status(200).json({ message: "User logged in successfully", token });
+    res.status(200).json({ message: "User logged in successfully", token: token, name: user.name });
 })
 
 

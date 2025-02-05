@@ -5,7 +5,10 @@ import aiRouter from './routes/ai';
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    credentials: true,
+    origin: "http://localhost:5173"
+}));
 
 app.use('/api/v1/user', userRouter);
 app.use("/api/v1/AI", aiRouter);

@@ -7,6 +7,7 @@ import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { Pricing } from "./Pricing";
 import { FAQ } from "./FAQ";
+import Cookies  from "js-cookie";
 
 export const Prompt2 = () => {
     const [prompt, setPrompt] = useState("");
@@ -14,6 +15,10 @@ export const Prompt2 = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if(!Cookies.get("token")){
+            navigate('/signin');
+            return;
+        }
         if (prompt.trim()) {
           navigate('/builder', { state: { prompt } });
         }

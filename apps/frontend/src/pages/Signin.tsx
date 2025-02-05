@@ -15,8 +15,11 @@ export const Signin = () => {
             const reponse = await axios.post(`${BACKEND_URL}/user/login`, {
                 email,
                 password
+            },{
+                withCredentials: true
             })
             if (reponse.status === 200) {
+                localStorage.setItem("name", reponse.data.name);
                 navigate ('/');
             }
         } catch (error) {
@@ -101,7 +104,7 @@ export const Signin = () => {
 
                         <div className="text-sm">
                             <a href="#" className="font-medium text-blue-400 hover:text-blue-300">
-                            Forgot password?
+                                Forgot password?
                             </a>
                         </div>
                     </div>
@@ -116,7 +119,7 @@ export const Signin = () => {
 
                     <p className="mt-2 text-center text-sm text-gray-400">
                         Don't have an account?{' '}
-                        <a href="#" className="font-medium text-blue-400 hover:text-blue-300">
+                        <a href="/signup" className="font-medium text-blue-400 hover:text-blue-300">
                             Sign up now
                         </a>
                     </p>

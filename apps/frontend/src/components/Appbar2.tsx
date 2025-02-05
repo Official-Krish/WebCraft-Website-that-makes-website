@@ -1,4 +1,6 @@
 import Logo from '../assets/Logo.png';
+import Cookies from 'js-cookie';
+import { UserDropdown } from './DropDown';
 
 export const Appbar2 = () => {
     return <div className="bg-brown3 flex justify-around items-center p-3 shadow-lg border-b-2 border-brown2">
@@ -15,8 +17,10 @@ export const Appbar2 = () => {
             <button className="hover:underline hover:text-gray-200">Pricing</button>
         </div>
 
-        <button className="bg-gradient-to-r from-purple-500 to-blue-500 text-white py-2 px-4 rounded-lg">
-            Get Started
-        </button>
+        {Cookies.get("token") ? <UserDropdown /> : 
+            <button className="bg-gradient-to-r from-purple-500 to-blue-500 text-white py-2 px-4 rounded-lg" onClick={() => window.location.href = '/signin'}>
+                Get Started
+            </button>
+        }
     </div>
 }

@@ -138,6 +138,8 @@ export function Builder() {
   async function init() {
     const response = await axios.post(`${BACKEND_URL}/ai/template`, {
       prompt: prompt.trim(),
+    }, {
+      withCredentials: true,
     });
     setTemplateSet(true);
 
@@ -278,6 +280,8 @@ export function Builder() {
                             setLoading(true);
                             const stepsResponse = await axios.post(`${BACKEND_URL}/ai/chat`, {
                               prompt: [...llmMessages, newMessage],
+                            }, {
+                              withCredentials: true,
                             });
                             setLoading(false);
 

@@ -9,18 +9,26 @@ export const Signup = () => {
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState('');
 
     const navigate = useNavigate();
   
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       try{
+        if(password !== confirmPassword){
+          setError('Passwords does not match');
+          return;
+        }
         const response = await axios.post(`${BACKEND_URL}/user/signup`, {
             email,
             password,
             name
+        },{
+            withCredentials: true
         });
         if(response.status === 200){
+            localStorage.setItem("name", name);
             navigate('/');
         }
       } catch (error) {
@@ -132,6 +140,8 @@ export const Signup = () => {
                       />
                     </div>
                   </div>
+
+                  {error && <div className="text-red-500 text-sm">{error}</div>}
               </div>
   
               <button
@@ -143,7 +153,7 @@ export const Signup = () => {
               </button>
   
               <p className="mt-2 text-center text-sm text-gray-400">
-                 'Already have an account?'{' '}
+                 Already have an account?{' '}
                 <button
                   type="button"
                   onClick={() => navigate('/signin')}
