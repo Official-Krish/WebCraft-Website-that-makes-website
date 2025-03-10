@@ -16,6 +16,8 @@
     "@google/generative-ai": "^0.21.0",
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.7",
+    "@types/websocket": "^1.0.10",
+    "@types/ws": "^8.18.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",

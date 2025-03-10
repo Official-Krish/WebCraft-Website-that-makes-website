@@ -1,7 +1,6 @@
 import type { ServerWebSocket } from "bun";
 import type { MessagePayload } from "./types";
 
-//TODO: Add auth
 const SUBSCRIPTIONS: ServerWebSocket<unknown>[] = []
 
 let bufferedMessages: any[] = []

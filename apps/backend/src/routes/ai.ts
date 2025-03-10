@@ -3,8 +3,6 @@ import { BASE_PROMPT, getSystemPrompt } from "../utils/prompts";
 import { basePrompt as reactBasePrompt } from "../defaults/react-base";
 import { basePrompt as nodeBasePrompt } from "../defaults/node-base";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { onFileUpdate, onPromptEnd, onPromptStart, onShellCommand } from "../utils/os";
-import { ArtifactProcessor } from "../utils/parser";
 
 const aiRouter: Router = Router();
 
@@ -52,42 +50,5 @@ aiRouter.post("/template", async (req, res) => {
         return;
     }
 });
-
-aiRouter.post("/chat", async (req, res) => {
-    try {
-        // Ensure the prompt is a string
-        let userPrompt = req.body.prompt || ""; 
-        if (typeof userPrompt !== "string") {
-            userPrompt = JSON.stringify(userPrompt, null, 2);
-        }
-
-        // Combine user prompt with system prompt
-        // const prompt = `${userPrompt}`.trim();
-
-        const prompt = userPrompt;
-
-        // Generate content
-        const response = await model.generateContentStream(`${prompt} give me proper code`);
-
-        let artifactProcessor = new ArtifactProcessor("", (filePath, fileContent) => onFileUpdate(filePath, fileContent), (shellCommand) => onShellCommand(shellCommand));
-
-        onPromptStart();
-        for await (const chunk of response.stream) {
-            const chunkText = chunk.text;
-            artifactProcessor.append(chunkText());
-            artifactProcessor.parse();
-        }
-        onPromptEnd();
-
-        // Send the response back to the client
-        res.status(200).json({ message: "Content generated successfully." });
-    } catch (error) {
-        console.error("Error in /chat route:", error);
-
-        // Respond with a meaningful error message
-        res.status(500).json({ error: "An error occurred while generating content." });
-    }
-});
-
 
 export default aiRouter;

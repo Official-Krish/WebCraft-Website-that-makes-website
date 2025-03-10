@@ -14,17 +14,19 @@ export class ArtifactProcessor {
     }
 
     parse() {
-        const matches = this.currentArtifact.match(/```html\s*([\s\S]*?)```/);
-        if (!matches || !matches[1]) {
-            console.log("No valid bolt artifact content found");
-            return;
-        }
+        // const matches = this.currentArtifact.match(/```html\s*([\s\S]*?)```/);
+        // if (!matches || !matches[1]) {
+        //     console.log("No valid bolt artifact content found");
+        //     return;
+        // }
 
-        const artifactContent = matches[1].trim();
-        if (!artifactContent) {
-            console.log("No artifact content found");
-            return;
-        }
+        // const artifactContent = matches[1].trim();
+        // if (!artifactContent) {
+        //     console.log("No artifact content found");
+        //     return;
+        // }
+
+        const artifactContent = this.currentArtifact;
         
         const latestActionStart = artifactContent.split("\n").findIndex((line) => line.includes("<boltAction type="));
 
