@@ -1,12 +1,13 @@
-FROM oven/bun:latest
+FROM node:20-alpine
+RUN npm install -g pnpm
 
 WORKDIR /app/apps/frontend
 
 COPY ./apps/frontend/ ./
 COPY ./apps/frontend/package.json ./
 
-RUN bun install
+RUN pnpm install
 
 EXPOSE 5173
 
-CMD ["bun", "run", "dev"]
+CMD ["pnpm", "run", "dev"]

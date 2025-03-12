@@ -1,0 +1,63 @@
+version: '3.7'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.frontend
+    ports:
+      - 5173:5173
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+    
+  worker:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.worker
+    ports:
+      - 4000:4000
+    volumes:
+      - ./apps/worker:/app/apps/worker
+    environment:
+      - GEMINI_API_KEY=
+
+  ws-relayer:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.relayer-ws
+    ports:
+      - 9093:9093
+    volumes:
+      - ./apps/relayer-ws:/app/apps/relayer-ws
+
+  primary-backend:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.primary-backend
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+
+    
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+  
+  code-server:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.code-server
+    ports:
+      - 8080:8080
+      - 8081:8081
+
+volumes:
+  postgres_data:
