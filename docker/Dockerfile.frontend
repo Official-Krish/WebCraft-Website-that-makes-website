@@ -1,0 +1,12 @@
+FROM oven/bun:latest
+
+WORKDIR /app/apps/frontend
+
+COPY ./apps/frontend/ ./
+COPY ./apps/frontend/package.json ./
+
+RUN bun install
+
+EXPOSE 5173
+
+CMD ["bun", "run", "dev"]

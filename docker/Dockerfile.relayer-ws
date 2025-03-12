@@ -1,0 +1,12 @@
+FROM oven/bun:latest
+
+WORKDIR /app/apps/relayer-ws
+
+COPY ./apps/relayer-ws/ ./
+COPY ./apps/relayer-ws/package.json ./
+
+RUN bun install
+
+EXPOSE 9093
+
+CMD ["bun", "index.ts"]

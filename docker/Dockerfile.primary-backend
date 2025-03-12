@@ -1,0 +1,17 @@
+FROM node:20-alpine
+RUN npm install -g pnpm
+
+WORKDIR /app
+
+COPY ./apps/backend/ ./apps/backend
+COPY ./packages/ ./packages
+COPY package.json .
+COPY turbo.json .
+COPY pnpm-lock.yaml .
+
+RUN pnpm install
+RUN pnpm run db:generate
+
+EXPOSE 3000
+
+CMD ["pnpm", "run", "primary-backend"]

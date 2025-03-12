@@ -17,8 +17,11 @@ EXPOSE 8080
 RUN git clone https://github.com/Official-Krish/Base-React-Project /tmp/Pixlr-worker
 RUN cd /tmp/Pixlr-worker && npm install
 
-RUN sudo chown -R coder /tmp/Pixlr-worker
+RUN wget https://raw.githubusercontent.com/Official-Krish/Pixlr-Extension/refs/heads/main/pixlr-listener-0.0.1.vsix
 
+RUN code-server --install-extension pixlr-listener-0.0.1.vsix
+
+RUN sudo chown -R coder /tmp/Pixlr-worker
 
 
 # Start code-server on container launch
