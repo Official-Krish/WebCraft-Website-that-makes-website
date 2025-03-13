@@ -1,20 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { StepsList } from '../components/StepsList';
-import { FileExplorer } from '../components/FileExplorer';
 import { TabView } from '../components/TabView';
-import { CodeEditor } from '../components/CodeEditor';
 import { PreviewFrame } from '../components/PreviewFrame';
 import { Step, FileItem, StepType } from '../types';
 import axios from 'axios';
-import { BACKEND_URL } from '../config';
+import { BACKEND_URL, IFRAME_URL, WORKER_URL } from '../config';
 import { parseXml, parseXml2 } from '../lib/steps';
 import { useWebContainer } from '../hooks/useWebContainer';
 import { MoveRight } from 'lucide-react';
 import { Chatbox } from "../components/chatbox";
 import { useNavigate } from "react-router-dom";
 import Logo from '../assets/Logo.png';
-import { TerminalComponent } from '../components/Terminal';
 
 export function Builder() {
   const location = useLocation();
@@ -29,7 +26,6 @@ export function Builder() {
 
   const [currentStep, setCurrentStep] = useState(1);
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
-  const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
   const [steps, setSteps] = useState<Step[]>([]);
   const [files, setFiles] = useState<FileItem[]>([]);
   const [hoveredComponent, setHoveredComponent] = useState<string | null>(null);
@@ -153,10 +149,8 @@ export function Builder() {
     );
 
     setLoading(true);
-    const stepsResponse = await axios.post(`${BACKEND_URL}/ai/chat`, {
-      prompt: [...prompts, prompt].map((content) => ({
-        content,
-      })),
+    const stepsResponse = await axios.post(`${WORKER_URL}/AI/chat`, {
+      prompt: prompt
     });
 
     setLoading(false);
@@ -308,21 +302,11 @@ export function Builder() {
                 </div>
               </div>
             </div>
-            {fileLoaded && 
               <div>
                 <div className='flex ml-16'>
-                  <div className='w-full min-w-[300px] h-[calc(100vh-15rem)] border border-brown4'>
-                    <FileExplorer files={files} onFileSelect={setSelectedFile} />
-                  </div>
-                  <div className=" bg-brown2 p-4 min-w-[650px] h-[calc(100vh-15rem)] border border-brown4">
-                    <CodeEditor file={selectedFile} />
-                  </div>
-                </div>
-                <div className='ml-16'>
-                  <TerminalComponent webcontainer={webcontainer!} />
+                  <iframe src={IFRAME_URL} />
                 </div>
               </div>
-            }
           </div>
         </div>
       }
