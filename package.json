@@ -5,7 +5,11 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "worker": "cd ./apps/worker && bun index.ts",
+    "primary-backend": "cd ./apps/primary-backend && bun index.ts",
+    "db:generate": "cd ./packages/db && pnpm dlx prisma generate && cd ../..",
+    "db:migrate": "cd ./packages/db && pnpm dlx prisma migrate dev && cd ../.."
   },
   "devDependencies": {
     "prettier": "^3.4.2",
