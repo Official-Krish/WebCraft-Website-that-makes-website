@@ -7,7 +7,10 @@ import { onFileUpdate, onPromptEnd, onPromptStart, onShellCommand } from './util
 
 const app = express();
 app.use(express.json());
-app.use(cors());;
+app.use(cors({
+    credentials: true,
+    origin: "http://localhost:5173"
+}));
 
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "");
@@ -39,8 +42,10 @@ app.post("/api/v1/AI/chat", async (req, res) => {
         let artifactProcessor = new ArtifactProcessor("", (filePath, fileContent) => onFileUpdate(filePath, fileContent), (shellCommand) => onShellCommand(shellCommand));
 
         onPromptStart();
+        let responseText = "";
         for await (const chunk of response.stream) {
             const chunkText = chunk.text;
+            responseText += chunkText();
             console.log(chunkText());
             artifactProcessor.append(chunkText());
             artifactProcessor.parse();
@@ -48,7 +53,7 @@ app.post("/api/v1/AI/chat", async (req, res) => {
         onPromptEnd();
 
         // Send the response back to the client
-        res.status(200).json({ message: "Content generated successfully." });
+        res.status(200).json({ message: responseText });
     } catch (error) {
         console.error("Error in /chat route:", error);
 

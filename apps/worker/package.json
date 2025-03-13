@@ -10,6 +10,13 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "cors": "^2.8.5"
+    "@google/generative-ai": "^0.24.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  },
+  "scripts": {
+    "start": "bun index.ts"
   }
 }

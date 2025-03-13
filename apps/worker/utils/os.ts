@@ -4,7 +4,7 @@ if (!Bun.file(BASE_WORKER_DIR).exists()) {
     Bun.write(BASE_WORKER_DIR, "");
 }
 
-const ws = new WebSocket(process.env.WS_RELAYER_URL || "ws://ws-relayer:9093");
+const ws = new WebSocket(process.env.WS_RELAYER_URL || "ws://localhost:9093");
 
 export async function onFileUpdate(filePath: string, fileContent: string) {
 
