@@ -25,4 +25,4 @@ RUN sudo chown -R coder /tmp/Pixlr-worker
 
 
 # Start code-server on container launch
-CMD ["code-server", "--auth", "none", "--bind-addr", "0.0.0.0:8080", "/tmp/Pixlr-worker"]
+CMD ["code-server", "--auth", "none", "--bind-addr", "0.0.0.0:8080", "--disable-telemetry", "/tmp/Pixlr-worker"]
