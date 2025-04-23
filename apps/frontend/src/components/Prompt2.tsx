@@ -20,7 +20,7 @@ export const Prompt2 = () => {
             return;
         }
         if (prompt.trim()) {
-          navigate('/builder', { state: { prompt } });
+          navigate('/project', { state: { prompt } });
         }
     };
 

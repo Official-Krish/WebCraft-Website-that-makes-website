@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -22,12 +22,15 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^11.15.0",
+    "http-proxy-middleware": "^3.0.5",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.469.0",
+    "motion": "^12.8.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.1",
     "react-tsparticles": "^2.12.2",
+    "recoil": "^0.7.7",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "tsparticles": "^3.7.1",
@@ -37,6 +40,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@types/http-proxy-middleware": "^1.0.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
