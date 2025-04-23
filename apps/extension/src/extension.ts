@@ -61,7 +61,7 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {}
 
 function initWS(context: vscode.ExtensionContext) {
-	const ws = new WebSocket(process.env.WS_RELAYER_URL || "ws://ws-relayer:9093");
+	const ws = new WebSocket(process.env.WS_RELAYER_URL || "wss://ws-relayer.krishdev.xyz/");
 
 	ws.onopen = () => {
 		ws.send(JSON.stringify({
