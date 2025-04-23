@@ -1,4 +1,4 @@
-export default function GridBackgroundDemo({ children }: { children: React.ReactNode }) {
+export default function GridBackground({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex h-[50rem] w-full bg-black">
       <div

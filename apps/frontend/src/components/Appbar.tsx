@@ -1,109 +1,85 @@
-import { motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Button } from "./ui/button";
+import { cn } from "../lib/utils";
+import { Menu } from "lucide-react";
+import Cookies from 'js-cookie';
+import { UserDropdown } from "./DropDown";
 
-const gradientText = "bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 text-transparent bg-clip-text";
-const glowEffect = "hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-shadow duration-300";
+const Appbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-export function AppBar() {
-  const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      if (offset > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
 
-  const menuItems = [
-    { title: "Templates", path: "/templates" },
-    { title: "Pricing", path: "/pricing" },
-    { title: "About", path: "/about" },
-    { title: "Signin", path: "/signin" },
-    { title: "Signup", path: "/signup" },
-  ];
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <motion.header 
-      className="sticky top-0 z-50 backdrop-blur-lg bg-gradient-to-b from-gray-900/70 to-transparent border-b border-cyan-900/30"
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    <header 
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 md:px-8",
+        isScrolled ? "bg-black/80 backdrop-blur-lg border-b border-white/5" : "bg-transparent"
+      )}
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-cyan-900/90 via-blue-900/90 to-indigo-900/70 opacity-90" />
-      <nav className="container mx-auto px-4 py-3 relative">
-        <div className="flex items-center justify-between">
-          <motion.div 
-            className="text-2xl font-bold"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 400 }}
-          >
-            <span className={`${gradientText} text-3xl`}>Pixlr</span>
-          </motion.div>
-
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-12">
-            {menuItems.map((item) => (
-              <motion.button
-                key={item.title}
-                className="relative text-gray-300 hover:text-white transition-colors text-lg group overflow-hidden"
-                whileHover={{ scale: 1.1 }}
-                onClick={() => (item.path)}
-              >
-                {item.title}
-                <motion.div 
-                  className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 transform scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"
-                />
-              </motion.button>
-            ))}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              className={`px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg font-medium ${glowEffect}`}
-              onClick={() => ('/create')}
-            >
-              Get Started
-            </motion.button>
+      <div className="container max-w-7xl mx-auto flex items-center justify-between">
+        <div className="flex items-center space-x-2 cursor-pointer" onClick={() => window.location.href = "/home"}>
+          <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center neon-glow">
+            <span className="font-bold text-white">AI</span>
           </div>
-
-          {/* Mobile Menu Button */}
-          <motion.button
-            className="md:hidden text-gray-300 p-2"
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </motion.button>
+          <span className="text-lg font-bold">WebCraft</span>
         </div>
-
-        {/* Mobile Menu */}
-        {isOpen && (
-          <motion.div
-            className="md:hidden pt-6 pb-4"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-          >
-            <div className="flex flex-col space-y-6 bg-gradient-to-b from-gray-900/95 to-gray-900/80 backdrop-blur-lg rounded-lg p-6 border border-cyan-900/30">
-              {menuItems.map((item) => (
-                <motion.button
-                  key={item.title}
-                  className="text-gray-300 hover:text-white transition-colors text-left text-lg font-medium"
-                  whileHover={{ x: 10 }}
-                  onClick={() => {
-                    (item.path);
-                    setIsOpen(false);
-                  }}
-                >
-                  {item.title}
-                </motion.button>
-              ))}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                className={`px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg font-medium ${glowEffect}`}
-                onClick={() => {
-                  ('/create');
-                  setIsOpen(false);
-                }}
-              >
-                Get Started
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
-      </nav>
-    </motion.header>
+        
+        <nav className="hidden md:flex items-center space-x-8">
+          <a href="#features" className="text-sm text-foreground/70 hover:text-foreground transition-colors">Features</a>
+          <a href="#demo" className="text-sm text-foreground/70 hover:text-foreground transition-colors">Demo</a>
+          <a href="#testimonials" className="text-sm text-foreground/70 hover:text-foreground transition-colors">Testimonials</a>
+          <a href="#pricing" className="text-sm text-foreground/70 hover:text-foreground transition-colors">Pricing</a>
+        </nav>
+        {Cookies.get("token") ? <UserDropdown /> : 
+          <div className="flex items-center space-x-4">
+            <Button variant="outline" size="sm" className="hidden md:flex hover:bg-white/5" onClick={() => window.location.href = "/signin"}>
+              Sign In
+            </Button>
+            <Button size="sm" className="neon-glow hover:bg-primary/90">
+              Try For Free
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="md:hidden" 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </div>
+        }
+      </div>
+      
+      {/* Mobile menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-lg border-b border-white/5 animate-fade-in">
+          <nav className="container max-w-7xl mx-auto py-4 px-6 flex flex-col space-y-4">
+            <a href="#features" className="text-sm py-2 text-foreground/70 hover:text-foreground transition-colors">Features</a>
+            <a href="#demo" className="text-sm py-2 text-foreground/70 hover:text-foreground transition-colors">Demo</a>
+            <a href="#testimonials" className="text-sm py-2 text-foreground/70 hover:text-foreground transition-colors">Testimonials</a>
+            <a href="#pricing" className="text-sm py-2 text-foreground/70 hover:text-foreground transition-colors">Pricing</a>
+            <Button variant="outline" size="sm" className="w-full mt-2 hover:bg-white/5">
+              Sign In
+            </Button>
+          </nav>
+        </div>
+      )}
+    </header>
   );
-}
+};
+
+export default Appbar;
