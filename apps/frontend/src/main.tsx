@@ -3,14 +3,12 @@ import './index.css'
 import App from './App.tsx'
 import { RecoilRoot } from 'recoil'
 import Appbar from './components/Appbar.tsx'
-import Footer from './components/Footer.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <>
     <RecoilRoot>
       <Appbar />
       <App/>
-      <Footer />
     </RecoilRoot>
   </>
 )

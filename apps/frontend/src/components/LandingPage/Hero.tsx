@@ -60,11 +60,11 @@ const HeroSection = () => {
         </div>
         
         <div className="mt-20 flex flex-wrap justify-center gap-x-16 gap-y-8 grayscale animate-fade-in opacity-0 [animation-delay:1200ms]">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/272px-Google_2015_logo.svg.png" alt="Google" className="h-6" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/2560px-Amazon_logo.svg.png" alt="Amazon" className="h-6" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/2560px-Netflix_2015_logo.svg.png" alt="Netflix" className="h-6" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Microsoft_logo.svg/2560px-Microsoft_logo.svg.png" alt="Microsoft" className="h-6" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Meta-Logo.png/2560px-Meta-Logo.png" alt="Meta" className="h-6" />
+          <img src="google.png" alt="Google" className="h-20" />
+          <img src="amazon.png" alt="Amazon" className="h-20" />
+          <img src="netflix.png" alt="Netflix" className="h-20" />
+          <img src="microsoft.png" alt="Microsoft" className="h-20" />
+          <img src="Meta-Logo.png" alt="Meta" className="h-20" />
         </div>
       </div>
     </section>
