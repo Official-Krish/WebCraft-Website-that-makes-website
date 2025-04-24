@@ -5,6 +5,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getSystemPrompt } from './utils/Prompt';
 import { ArtifactProcessor } from './utils/parser';
 import { onFileUpdate, onPromptEnd, onPromptStart, onShellCommand } from './utils/os';
+import { authMiddleware } from './middleware';
 
 const app = express();
 app.use(express.json());
@@ -24,7 +25,7 @@ const model = genAI.getGenerativeModel({
     systemInstruction: getSystemPrompt() 
 });
 
-app.post("/api/v1/AI/chat", async (req, res) => {
+app.post("/api/v1/AI/chat", authMiddleware, async (req, res) => {
     try {
         // Ensure the prompt is a string
         let userPrompt = req.body.prompt || ""; 

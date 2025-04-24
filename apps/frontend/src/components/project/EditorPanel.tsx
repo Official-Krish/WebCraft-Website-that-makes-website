@@ -6,11 +6,10 @@ import { Button } from '../ui/button';
 import { useWebContainer } from '../../hooks/useWebContainer';
 import { PreviewFrame } from '../PreviewFrame';
 import { FileItem } from '../../types';
-import { IFRAME_URL } from '../../config';
 
 
 type ViewMode = 'editor' | 'preview';
-export const EditorPanel = ({files}: {files: FileItem[]}) => {
+export const EditorPanel = ({ files, IFRAME_URL }: { files: FileItem[], IFRAME_URL: string }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('editor');
   const webcontainer = useWebContainer();
   

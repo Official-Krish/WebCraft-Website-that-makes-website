@@ -3,6 +3,7 @@ import { BASE_PROMPT, getSystemPrompt } from "../utils/prompts";
 import { basePrompt as reactBasePrompt } from "../defaults/react-base";
 import { basePrompt as nodeBasePrompt } from "../defaults/node-base";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { authMiddleware } from "../utils/middleware";
 
 const aiRouter: Router = Router();
 
@@ -16,7 +17,7 @@ const model = genAI.getGenerativeModel({
     systemInstruction: getSystemPrompt() 
 });
 
-aiRouter.post("/template", async (req, res) => {
+aiRouter.post("/template", authMiddleware, async (req, res) => {
     const prompt = req.body.prompt + "Return either react or node based on what do you think this project should be. Only return a single word response, either react or node. Do not return anything else.";
     
     // const response = await anthropic.messages.create({

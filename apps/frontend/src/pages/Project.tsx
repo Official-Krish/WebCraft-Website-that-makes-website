@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import GridBackground from "../components/BackgroundGrid"
 import { ChatPanel } from "../components/project/ChatPanel"
 import { EditorPanel } from "../components/project/EditorPanel"
@@ -6,10 +6,11 @@ import { ResizableLayout } from "../components/project/resizableComponent"
 import { Step, StepType } from "../types"
 import { useLocation } from "react-router-dom"
 import axios from "axios"
-import { BACKEND_URL, WORKER_URL } from "../config"
+import { BACKEND_URL, WORKER_ORCHASTRATOR_URL, WORKER_URL } from "../config"
 import { parseXml, parseXml2 } from "../lib/steps"
 import { useRecoilState } from "recoil"
 import { filesAtom, llmMessagesAtom, stepsAtom } from "../store/response"
+import Cookies from "js-cookie"
 
 export const Project = () => {
   const location = useLocation();
@@ -17,6 +18,7 @@ export const Project = () => {
   const [files, setFiles] = useRecoilState(filesAtom);
   const [llmMessages, setLlmMessages] = useRecoilState(llmMessagesAtom);
   const [steps, setSteps] = useRecoilState(stepsAtom);
+  const [iframeUrl, setIframeUrl] = useState<string | null>(null);
 
 
   useEffect(() => {
@@ -98,8 +100,11 @@ export const Project = () => {
   async function init() {
     const response = await axios.post(`${BACKEND_URL}/ai/template`, {
       prompt: prompt.trim(),
-    }, {
+    },{
       withCredentials: true,
+      headers: {
+        Authorization: `${Cookies.get("token")}`,
+      }
     });
 
     const { prompts, uiPrompts } = response.data;
@@ -111,8 +116,23 @@ export const Project = () => {
       }))
     );
 
-    const stepsResponse = await axios.post(`${WORKER_URL}/AI/chat`, {
+    async () => {
+      const response = await axios.get(`${WORKER_ORCHASTRATOR_URL}/1234`,{
+          headers: {
+            Authorization: `${Cookies.get("token")}`,
+          }
+        }
+      );
+      setIframeUrl(response.data.ip);
+    };
+
+    const stepsResponse = await axios.post(`${WORKER_URL}/AI/chat`,
+    {
       prompt: prompt
+    }, {
+      headers: {
+        Authorization: `${Cookies.get("token")}`,
+      }
     });
 
     setSteps((s) => [
@@ -143,7 +163,7 @@ export const Project = () => {
                 <div className="px-4 py-3 w-full h-full">
                   <ResizableLayout
                     leftPanel={<ChatPanel />}
-                    rightPanel={<EditorPanel files={files} />}
+                    rightPanel={<EditorPanel files={files} IFRAME_URL={iframeUrl!}/>}
                     defaultLeftWidth={30}
                     minLeftWidth={20}
                     maxLeftWidth={30}
