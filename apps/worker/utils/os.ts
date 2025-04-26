@@ -1,3 +1,5 @@
+import prisma from "@repo/db/client";
+
 const BASE_WORKER_DIR = "/tmp/Pixlr-worker";
 
 if (!Bun.file(BASE_WORKER_DIR).exists()) {
@@ -6,8 +8,15 @@ if (!Bun.file(BASE_WORKER_DIR).exists()) {
 
 const ws = new WebSocket(process.env.WS_RELAYER_URL || "ws://localhost:9093");
 
-export async function onFileUpdate(filePath: string, fileContent: string) {
+export async function onFileUpdate(filePath: string, fileContent: string, projectId: string, promptId: string) {
 
+    await prisma.action.create({
+        data: {
+            content: `Updated file ${filePath}`,
+            projectId: projectId,
+            promptId: promptId,
+        }
+    })
     ws.send(JSON.stringify({
         event: "admin",
         data: {
@@ -18,7 +27,7 @@ export async function onFileUpdate(filePath: string, fileContent: string) {
     }))
 }
 
-export async function onShellCommand(shellCommand: string) {
+export async function onShellCommand(shellCommand: string, projectId: string, promptId: string) {
     //npm run build && npm run start
     const commands = shellCommand.split("&&");
     for (const command of commands) {
@@ -33,6 +42,13 @@ export async function onShellCommand(shellCommand: string) {
                 content: command
             }
         }))
+        await prisma.action.create({
+            data: {
+                content: `Running command ${command}`,
+                projectId,
+                promptId,
+            }
+        })
     }
 }
 

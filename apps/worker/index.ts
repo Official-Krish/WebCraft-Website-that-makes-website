@@ -6,6 +6,7 @@ import { getSystemPrompt } from './utils/Prompt';
 import { ArtifactProcessor } from './utils/parser';
 import { onFileUpdate, onPromptEnd, onPromptStart, onShellCommand } from './utils/os';
 import { authMiddleware } from './middleware';
+import prisma from "@repo/db/client";
 
 const app = express();
 app.use(express.json());
@@ -29,8 +30,19 @@ app.post("/api/v1/AI/chat", authMiddleware, async (req, res) => {
     try {
         // Ensure the prompt is a string
         let userPrompt = req.body.prompt || ""; 
+        const projectId = req.body.projectId || ""; 
         if (typeof userPrompt !== "string") {
             userPrompt = JSON.stringify(userPrompt, null, 2);
+        }
+
+        const project = await prisma.project.findUnique({
+            where: {
+                id: projectId,
+            },
+        });
+        if (!project) {
+            res.status(404).json({ error: "Project not found" });
+            return;
         }
 
         // Combine user prompt with system prompt
@@ -38,10 +50,29 @@ app.post("/api/v1/AI/chat", authMiddleware, async (req, res) => {
 
         const prompt = userPrompt;
 
-        // Generate content
-        const response = await model.generateContentStream(`${prompt} give me proper react code`);
+        const promptDb = await prisma.prompt.create({
+            data: {
+                content: prompt,
+                projectId: projectId,
+                type: "USER",
+            }
+        })
 
-        let artifactProcessor = new ArtifactProcessor("", (filePath, fileContent) => onFileUpdate(filePath, fileContent), (shellCommand) => onShellCommand(shellCommand));
+        const allPrompts = await prisma.prompt.findMany({
+            where: {
+                projectId: projectId,
+            },
+            orderBy: {
+                createdAt: "asc",
+            },
+        });
+
+        // Generate content
+        const response = await model.generateContentStream(
+            allPrompts.map((prompt) => prompt.content).join("\n"),
+        );
+
+        let artifactProcessor = new ArtifactProcessor("", (filePath, fileContent) => onFileUpdate(filePath, fileContent, projectId, promptDb.id), (shellCommand) => onShellCommand(shellCommand, projectId, promptDb.id));
 
         onPromptStart();
         let responseText = "";
