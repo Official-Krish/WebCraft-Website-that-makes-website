@@ -40,7 +40,7 @@ export const Project = () => {
             <GridBackground>
                 <div className="px-4 py-3 w-full h-full">
                   <ResizableLayout
-                    leftPanel={<ChatPanel />}
+                    leftPanel={<ChatPanel projectId={projectId}/>}
                     rightPanel={<EditorPanel IFRAME_URL={iframeUrl!}/>}
                     defaultLeftWidth={30}
                     minLeftWidth={20}
