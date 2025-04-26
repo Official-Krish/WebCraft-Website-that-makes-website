@@ -1,4 +1,4 @@
-# AI Website Generator
+# AI Website Generator (Coming Soon)
 
 A modern web application that uses AI to generate beautiful, production-ready websites. Built with TypeScript, React, Node.js, and powered by Claude AI.
 
@@ -37,8 +37,8 @@ A modern web application that uses AI to generate beautiful, production-ready we
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Official-Krish/Bolt
-cd Bolt
+git clone https://github.com/Official-Krish/WebCraft-Website-that-makes-website
+cd WebCraft-Website-that-makes-website
 ```
 
 2. Install dependencies:
