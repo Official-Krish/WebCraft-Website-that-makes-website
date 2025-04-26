@@ -14,10 +14,49 @@ datasource db {
 }
 
 model User {
-  id        Int   @id @default(autoincrement())
+  id        String   @id @default(uuid())
   email     String   @unique
   password  String
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  projects  Project[]
+}
+
+model Project {
+  id            String   @id @default(uuid())
+  description   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  prompt        Prompt[]
+  actions       Action[]
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model Prompt {
+  id            String   @id @default(uuid())
+  content       String
+  type          PromptType
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  projectId     String
+  project       Project  @relation(fields: [projectId], references: [id])
+  actions       Action[]
+}
+
+model Action {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  project       Project  @relation(fields: [projectId], references: [id])
+  content       String
+  projectId     String
+  promptId      String
+  prompt        Prompt   @relation(fields: [promptId], references: [id])
+}
+
+enum PromptType {
+  USER
+  SYSTEM
 }
