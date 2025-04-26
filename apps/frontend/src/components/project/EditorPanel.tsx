@@ -1,54 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Code, MonitorSmartphone } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';
 import { useWebContainer } from '../../hooks/useWebContainer';
 import { PreviewFrame } from '../PreviewFrame';
-import { FileItem } from '../../types';
-
 
 type ViewMode = 'editor' | 'preview';
-export const EditorPanel = ({ files, IFRAME_URL }: { files: FileItem[], IFRAME_URL: string }) => {
+export const EditorPanel = ({ IFRAME_URL }: { IFRAME_URL: string }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('editor');
   const webcontainer = useWebContainer();
-  
-  useEffect(() => {
-    const createMountStructure = (files: FileItem[]): Record<string, any> => {
-      const mountStructure: Record<string, any> = {};
-
-      const processFile = (file: FileItem, isRootFolder: boolean) => {
-        if (file.type === 'folder') {
-          mountStructure[file.name] = {
-            directory: file.children
-              ? Object.fromEntries(file.children.map((child) => [child.name, processFile(child, false)]))
-              : {},
-          };
-        } else if (file.type === 'file') {
-          if (isRootFolder) {
-            mountStructure[file.name] = {
-              file: {
-                contents: file.content || '',
-              },
-            };
-          } else {
-            return {
-              file: {
-                contents: file.content || '',
-              },
-            };
-          }
-        }
-        return mountStructure[file.name];
-      };
-
-      files.forEach((file) => processFile(file, true));
-      return mountStructure;
-    };
-
-    const mountStructure = createMountStructure(files);
-    webcontainer?.mount(mountStructure);
-  }, [files, webcontainer]);
 
   return (
     <motion.div 
@@ -112,8 +73,7 @@ export const EditorPanel = ({ files, IFRAME_URL }: { files: FileItem[], IFRAME_U
               className="h-full p-4"
             >
                 <PreviewFrame
-                    webContainer={webcontainer!}
-                    files={files}
+                    url={IFRAME_URL}
                 />
             </motion.div>
           )}

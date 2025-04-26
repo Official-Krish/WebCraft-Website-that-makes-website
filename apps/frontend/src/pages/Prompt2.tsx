@@ -2,25 +2,37 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import website from '../assets/website.png';
 import Export from '../assets/Export.png';
-import { ChooseTemplates, Examples, features, steps } from "./lib/constants";
+import { ChooseTemplates, Examples, features, steps } from "../components/lib/constants";
 import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
-import { Pricing } from "./Pricing";
-import { FAQ } from "./FAQ";
+import { Pricing } from "../components/Pricing";
+import { FAQ } from "../components/FAQ";
 import Cookies  from "js-cookie";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
 
 export const Prompt2 = () => {
     const [prompt, setPrompt] = useState("");
     const navigate = useNavigate();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if(!Cookies.get("token")){
             navigate('/signin');
             return;
         }
-        if (prompt.trim()) {
-          navigate('/project', { state: { prompt } });
+        const res = await axios.post(`${BACKEND_URL}/api/v1/project/create`, { prompt }, {
+            headers: {
+                Authorization: `${Cookies.get("token")}`,
+            },
+        });
+       if (res.status === 200) {
+            navigate(`/project/${res.data.projectId}?prompt=${prompt}`), {
+                state: { projectId: res.data.projectId, prompt: prompt },
+            };
+        }
+        else {
+            alert("Error creating project");
         }
     };
 

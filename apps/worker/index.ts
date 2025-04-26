@@ -39,7 +39,7 @@ app.post("/api/v1/AI/chat", authMiddleware, async (req, res) => {
         const prompt = userPrompt;
 
         // Generate content
-        const response = await model.generateContentStream(`${prompt} give me proper code`);
+        const response = await model.generateContentStream(`${prompt} give me proper react code`);
 
         let artifactProcessor = new ArtifactProcessor("", (filePath, fileContent) => onFileUpdate(filePath, fileContent), (shellCommand) => onShellCommand(shellCommand));
 
