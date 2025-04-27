@@ -8,6 +8,7 @@ COPY ./packages/ ./packages
 COPY package.json .
 COPY turbo.json .
 COPY pnpm-lock.yaml .
+COPY pnpm-workspace.yaml .
 
 RUN pnpm install
 RUN pnpm run db:generate

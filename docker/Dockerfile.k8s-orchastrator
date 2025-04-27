@@ -1,18 +1,20 @@
-FROM oven/bun:latest
+FROM node:23-alpine
+RUN npm install -g pnpm
+RUN npm install -g bun
 
 WORKDIR /app/
 
-COPY ./apps/k8s-orchastrator/ ./apps/k8s-orchastrator/
+COPY ./apps/k8s-orchastrator/ ./apps/k8s-orchastrator
 
+# Copy package.json first
 COPY ./packages/ ./packages
-
 COPY package.json .
-COPY turbo.json .
+COPY pnpm-workspace.yaml .
 
-RUN bun install
+# Install dependencies
+RUN pnpm install
 RUN pnpm run db:generate
 
-EXPOSE 7000
+EXPOSE 9000
 
 CMD ["pnpm", "run", "k8s-orchastrator"]
-

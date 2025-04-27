@@ -1,15 +1,18 @@
-FROM oven/bun:latest
+FROM node:23-alpine
+RUN npm install -g pnpm
+RUN npm install -g bun
 
-WORKDIR /app/apps/worker
+WORKDIR /app/
 
 COPY ./apps/worker/ ./apps/worker
 
 # Copy package.json first
 COPY ./packages/ ./packages
 COPY package.json .
+COPY pnpm-workspace.yaml .
 
 # Install dependencies
-RUN bun install
+RUN pnpm install
 RUN pnpm run db:generate
 
 EXPOSE 4000
