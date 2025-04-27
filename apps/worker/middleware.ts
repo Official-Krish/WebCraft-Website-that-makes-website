@@ -29,7 +29,7 @@ export async function authMiddleware(
     console.log("Received token:", token);
 
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!, {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "mysecret", {
       algorithms: ["RS256"]
     });
 

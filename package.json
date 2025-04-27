@@ -9,7 +9,7 @@
     "worker": "cd ./apps/worker && bun index.ts",
     "k8s-orchastrator": "cd ./apps/k8s-orchastrator && bun index.ts",
     "primary-backend": "cd ./apps/primary-backend && bun index.ts",
-    "db:generate": "cd ./packages/db && pnpm dlx prisma generate && cd ../..",
+    "db:generate": "cd ./packages/db && pnpm install && pnpm dlx prisma generate && cd ../..",
     "db:migrate": "cd ./packages/db && pnpm dlx prisma migrate dev && cd ../.."
   },
   "devDependencies": {

@@ -5,7 +5,6 @@ import { cn } from '../../lib/utils';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import axios from 'axios';
-import { WORKER_URL } from '../../config';
 import { usePrompts } from '../../hooks/usePrompts';
 import Cookies from 'js-cookie';
 
@@ -17,7 +16,7 @@ export interface Message {
 }
 
 
-export const ChatPanel = ({projectId}: { projectId: string }) => {
+export const ChatPanel = ({projectId, workerUrl}: { projectId: string, workerUrl: string }) => {
   const [input, setInput] = useState('');
   const prompts = usePrompts(projectId);
 
@@ -53,11 +52,7 @@ export const ChatPanel = ({projectId}: { projectId: string }) => {
       </div>
       
       <div>
-        <form 
-          onSubmit={(e) => {
-            e.preventDefault();
-            
-          }}
+        <div 
           className="flex items-center space-x-2"
         >
           <Input
@@ -74,7 +69,7 @@ export const ChatPanel = ({projectId}: { projectId: string }) => {
             size="icon"
             disabled={input.trim() === ''}
             onClick={ async () => {
-              await axios.post(`${WORKER_URL}/AI/chat`, {
+              await axios.post(`${workerUrl}/api/v1/AI/chat`, {
                 prompt: input,
                 projectId: projectId
               }, {
@@ -87,7 +82,7 @@ export const ChatPanel = ({projectId}: { projectId: string }) => {
           >
             <SendHorizontal size={18} />
           </Button>
-        </form>
+        </div>
       </div>
     </motion.div>
   );

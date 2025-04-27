@@ -100,7 +100,7 @@ export async function createIngressForProject(projectId: string) {
                         `preview-${projectId}.${DOMAIN}`,
                         `worker-${projectId}.${DOMAIN}`,
                     ],
-                    secretName: `cert-${projectId}`, // TLS secret name
+                    secretName: `cert-${projectId}`,
                 },
             ],
         },
@@ -293,6 +293,6 @@ app.get("/worker/:projectId", async (req, res) => {
 });
 
 
-app.listen(7000, () => {
-    console.log('K8s Orchestrator is running on port 7000');
+app.listen(9000, () => {
+    console.log('K8s Orchestrator is running on port 9000');
 });

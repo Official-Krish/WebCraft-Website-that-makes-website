@@ -3,13 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Code, MonitorSmartphone } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';
-import { useWebContainer } from '../../hooks/useWebContainer';
 import { PreviewFrame } from '../PreviewFrame';
 
 type ViewMode = 'editor' | 'preview';
-export const EditorPanel = ({ IFRAME_URL }: { IFRAME_URL: string }) => {
+export const EditorPanel = ({ sessionUrl, previewUrl }: { sessionUrl: string, previewUrl: string }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('editor');
-  const webcontainer = useWebContainer();
 
   return (
     <motion.div 
@@ -61,7 +59,7 @@ export const EditorPanel = ({ IFRAME_URL }: { IFRAME_URL: string }) => {
               transition={{ duration: 0.2 }}
               className="h-full p-4"
             >
-              <iframe src={IFRAME_URL} width="980" height="624" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+              <iframe src={sessionUrl} width="980" height="624" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
             </motion.div>
           ) : (
             <motion.div
@@ -73,7 +71,7 @@ export const EditorPanel = ({ IFRAME_URL }: { IFRAME_URL: string }) => {
               className="h-full p-4"
             >
                 <PreviewFrame
-                    url={IFRAME_URL}
+                    url={previewUrl}
                 />
             </motion.div>
           )}
