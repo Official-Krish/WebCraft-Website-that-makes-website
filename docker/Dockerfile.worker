@@ -2,14 +2,16 @@ FROM oven/bun:latest
 
 WORKDIR /app/apps/worker
 
-COPY ./apps/worker/ ./
+COPY ./apps/worker/ ./apps/worker
 
 # Copy package.json first
-COPY ./apps/worker/package.json ./
+COPY ./packages/ ./packages
+COPY package.json .
 
 # Install dependencies
 RUN bun install
+RUN pnpm run db:generate
 
 EXPOSE 4000
 
-CMD ["bun", "index.ts"]
+CMD ["pnpm", "run", "worker"]

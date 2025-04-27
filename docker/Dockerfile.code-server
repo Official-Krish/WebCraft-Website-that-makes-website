@@ -12,17 +12,20 @@ RUN apt-get update \
 USER coder
 # Expose code-server's default port
 EXPOSE 8080
+EXPOSE 8081
 
 
-RUN git clone https://github.com/Official-Krish/Base-React-Project /tmp/Pixlr-worker
-RUN cd /tmp/Pixlr-worker && npm install
+RUN git clone https://github.com/Official-Krish/Base-React-Project /tmp/react-app
+RUN cd /tmp/react-app && npm install
 
-RUN wget https://raw.githubusercontent.com/Official-Krish/Pixlr-Extension/refs/heads/main/pixlr-listener-0.0.1.vsix
+RUN wget https://github.com/Official-Krish/WebCraft-Extension/raw/refs/heads/main/webcraft-listener-0.0.1.vsix
 
-RUN code-server --install-extension pixlr-listener-0.0.1.vsix
+RUN code-server --install-extension webcraft-listener-0.0.1.vsix
 
-RUN sudo chown -R coder /tmp/Pixlr-worker
+RUN sudo chown -R coder /tmp/react-app
 
+RUN mkdir -p /home/coder/.local/share/code-server/User
+RUN echo '{"workbench.colorTheme": "Dark+", "workbench.preferredDarkColorTheme": "Dark+"}' > /home/coder/.local/share/code-server/User/settings.json
 
 # Start code-server on container launch
-CMD ["code-server", "--auth", "none", "--bind-addr", "0.0.0.0:8080", "--disable-telemetry", "/tmp/Pixlr-worker"]
+CMD ["code-server", "--auth", "none", "--bind-addr", "0.0.0.0:8080", "--disable-telemetry", "/app"]

@@ -1,0 +1,18 @@
+FROM oven/bun:latest
+
+WORKDIR /app/
+
+COPY ./apps/k8s-orchastrator/ ./apps/k8s-orchastrator/
+
+COPY ./packages/ ./packages
+
+COPY package.json .
+COPY turbo.json .
+
+RUN bun install
+RUN pnpm run db:generate
+
+EXPOSE 7000
+
+CMD ["pnpm", "run", "k8s-orchastrator"]
+
