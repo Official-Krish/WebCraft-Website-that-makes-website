@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webcraft-frontend
+spec:
+  selector:
+    app: webraft-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5173
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webcraft-primary-backend
+spec:
+  selector:
+    app: webcraft-primary-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webcraft-k8s-orchastrator
+spec:
+  selector:
+    app: webcraft-k8s-orchastrator
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9000
+  type: ClusterIP

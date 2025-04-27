@@ -1,0 +1,41 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: webcraft-frontend-cert
+  namespace: default
+spec:
+  secretName: webcraft-frontend-tls
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+  commonName: webcraft.krishdev.xyz
+  dnsNames:
+  - webcraft.krishdev.xyz
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: webcraft-primary-backend-cert
+  namespace: default
+spec:
+  secretName: webcraft-backend-tls
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+  commonName: api.webcraft.krishdev.xyz
+  dnsNames:
+  - api.webcraft.krishdev.xyz
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: webcraft-orchastrator-cert
+  namespace: default
+spec:
+  secretName: webcraft-orchastrator-tls
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+  commonName: webcraft.k8s-orchastrator.krishdev.xyz
+  dnsNames:
+  - webcraft.k8s-orchastrator.krishdev.xyz

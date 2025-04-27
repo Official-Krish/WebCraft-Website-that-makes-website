@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webcraft-frontend
+  labels:
+    app: webcraft-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webcraft-frontend
+  template:
+    metadata:
+      labels:
+        app: webcraft-frontend
+    spec:
+      containers:
+        - name: webcraft-frontend
+          image: krishanand01/webcraft-fe:v1
+          ports:
+            - containerPort: 5173
+          volumeMounts:
+            - name: env-file
+              mountPath: /app/.env
+              subPath: env
+      volumes:
+        - name: env-file
+          secret:
+            secretName: webcraft-secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webcraft-primary-backend
+  labels:
+    app: webcraft-primary-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webcraft-primary-backend
+  template:
+    metadata:
+      labels:
+        app: webcraft-primary-backend
+    spec:
+      containers:
+        - name: webcraft-primary-backend
+          image: krishanand01/webcraft-primary-backend:v1
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: env-file
+              mountPath: /app/apps/backend/.env
+              subPath: env
+      volumes:
+        - name: env-file
+          secret:
+            secretName: webcraft-secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webcraft-k8s-orchastrator
+  labels:
+    app: webcraft-k8s-orchastrator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webcraft-k8s-orchastrator
+  template:
+    metadata:
+      labels:
+        app: webcraft-k8s-orchastrator
+    spec:
+      containers:
+        - name: webcraft-k8s-orchastrator
+          image: krishanand01/webcraft-k8s-orchastrator:v1
+          ports:
+            - containerPort: 9000
+          volumeMounts:
+            - name: env-file
+              mountPath: /app/apps/k8s-orchastrator/.env
+              subPath: env
+      volumes:
+        - name: env-file
+          secret:
+            secretName: webcraft-secret
