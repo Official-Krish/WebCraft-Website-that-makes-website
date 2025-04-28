@@ -3,7 +3,7 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-COPY ./apps/backend/ ./apps/backend
+COPY ./apps/backend/ ./apps/primary-backend
 COPY ./packages/ ./packages
 COPY package.json .
 COPY turbo.json .
