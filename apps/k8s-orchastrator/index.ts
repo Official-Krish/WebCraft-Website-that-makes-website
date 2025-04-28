@@ -1,3 +1,4 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 import express from 'express';
 import cors from 'cors';
 import prisma from "@repo/db/client"
@@ -7,7 +8,6 @@ import { Writable } from 'stream';
 import { DOMAIN } from './config';
 
 const app = express();
-app.use(express.json());
 app.use(cors());
 
 const kc = new KubeConfig();
@@ -124,7 +124,7 @@ async function createPod(name: string) {
         spec: {
             containers: [{
                 name: "code-server",
-                image: "krishanand01/code-server:v1",
+                image: "krishanand01/webcraft-code-server:v1",
                 ports: [{
                     containerPort: 8080
                 }, {
@@ -132,13 +132,13 @@ async function createPod(name: string) {
                 }],
             }, {
                 name: "ws-relayer",
-                image: "krishanand01/ws-relayer:v1",
+                image: "krishanand01/webcraft-relayer-ws:v2",
                 ports: [{
                     containerPort: 9093
                 }],
             }, {
                 name: "worker",
-                image: "krishanand01/worker:v1",
+                image: "krishanand01/webcraft-worker:v2",
                 ports: [{
                     containerPort: 4000
                 }],
@@ -225,7 +225,7 @@ async function checkPodIsReady(name: string) {
         if (pod.status?.phase === "Running") {
             return;
         }
-        if(attempts > 10) {
+        if(attempts > 20) {
             throw new Error("Pod is not ready");
         }
         await new Promise(resolve => setTimeout(resolve, 3000));
@@ -235,11 +235,15 @@ async function checkPodIsReady(name: string) {
 
 async function assignPodToProject(projectId: string) {
     const pods = await listPods();
+    console.log("pods",pods);
     const podExits = pods.find(pod => pod === projectId);
     if (!podExits) {
+        console.log("Pod does not exist creating pod");
         await createPod(projectId);
+        console.log("Pod created");
     }
     await checkPodIsReady(projectId);
+    console.log("Pod is ready");
     const exec = new k8s.Exec(kc);
     let stdout = "";
     let stderr = "";
@@ -266,10 +270,14 @@ async function assignPodToProject(projectId: string) {
         }
     )
     await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log("Pod is ready");
+    console.log("Pod is ready finally");
     console.log(stdout);
     console.log(stderr);
+    createIngressForProject(projectId);
+    await new Promise(resolve => setTimeout(resolve, 10000));
 }
+
+app.use(express.json());
 
 app.get("/worker/:projectId", async (req, res) => {
     const { projectId } = req.params;
