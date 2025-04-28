@@ -14,9 +14,11 @@ USER coder
 EXPOSE 8080
 EXPOSE 8081
 
-
 RUN git clone https://github.com/Official-Krish/Base-React-Project /tmp/react-app
+
 RUN cd /tmp/react-app && npm install
+
+WORKDIR /tmp/react-app
 
 RUN wget https://github.com/Official-Krish/WebCraft-Extension/raw/refs/heads/main/webcraft-listener-0.0.1.vsix
 
