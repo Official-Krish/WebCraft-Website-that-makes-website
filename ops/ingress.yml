@@ -1,0 +1,49 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-nginx
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - webcraft.krishdev.xyz
+      secretName: webcraft-frontend-tls
+    - hosts:
+        - api.webcraft.krishdev.xyz
+      secretName: webcraft-primary-backend-tls
+    - hosts:
+        - webcraft.k8s-orchastrator.krishdev.xyz
+      secretName: webcraft-orchastrator-tls
+
+  rules:
+    - host: webcraft.krishdev.xyz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: webcraft-frontend
+                port:
+                  number: 80
+
+    - host: api.webcraft.krishdev.xyz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: webcraft-primary-backend
+                port:
+                  number: 80
+    - host: webcraft.k8s-orchastrator.krishdev.xyz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: webcraft-k8s-orchastrator
+                port:
+                  number: 80
