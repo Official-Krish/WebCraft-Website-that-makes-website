@@ -1,4 +1,4 @@
-FROM node:23-alpine
+FROM node:23-slim
 RUN npm install -g pnpm
 
 WORKDIR /app
