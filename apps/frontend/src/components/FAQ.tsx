@@ -5,17 +5,17 @@ export const FAQ = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const questions = [
-    "What is Pixlr?",
-    "How does Pixlr work?",
-    "Do I need coding skills to use Pixlr?",
-    "How fast can I create a website with Pixlr?",
+    "What is webcraft?",
+    "How does webcraft work?",
+    "Do I need coding skills to use webcraft?",
+    "How fast can I create a website with webcraft?",
   ];
 
   const answers = [
-    "Pixlr is a platform that simplifies web design using AI.",
-    "Pixlr works by leveraging AI to generate customized website designs based on user preferences.",
-    "No, you don't need coding skills. Pixlr is designed to be user-friendly for everyone.",
-    "With Pixlr, you can create a website in minutes, depending on your requirements.",
+    "webcraft is a platform that simplifies web design using AI.",
+    "webcraft works by leveraging AI to generate customized website designs based on user preferences.",
+    "No, you don't need coding skills. webcraft is designed to be user-friendly for everyone.",
+    "With webcraft, you can create a website in minutes, depending on your requirements.",
   ];
 
   const toggleAccordion = (index: number) => {

@@ -5,7 +5,7 @@ import { EditorPanel } from "../components/project/EditorPanel"
 import { ResizableLayout } from "../components/project/resizableComponent"
 import { useLocation } from "react-router-dom"
 import axios from "axios"
-import { K8S_ORCHASTRATOR_URL, WORKER_URL } from "../config"
+import { K8S_ORCHASTRATOR_URL } from "../config"
 import Cookies from "js-cookie"
 
 
@@ -29,9 +29,6 @@ export const Project = () => {
     } catch (error) {
       console.error("Error fetching iframe URL:", error);
     }
-    await axios.post(`${WORKER_URL}/AI/chat`, {
-      prompt: prompt
-    })
   }
 
   useEffect(() => {

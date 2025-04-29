@@ -35,7 +35,7 @@ export const Signin = () => {
                     <div className="text-center">
                         <div className="flex items-center justify-center gap-2 mb-8">
                             <Code className="h-8 w-8 text-blue-400" />
-                            <span className="text-2xl font-bold text-white">Pixlr</span>
+                            <span className="text-2xl font-bold text-white">webcraft</span>
                         </div>
                         <h2 className="text-3xl font-extrabold text-white">Welcome back</h2>
                         <p className="mt-2 text-sm text-gray-400">
@@ -131,7 +131,7 @@ export const Signin = () => {
         <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-blue-600/20 to-purple-600/20 p-12 items-center justify-center">
             <div className="max-w-lg">
                 <h2 className="text-4xl font-bold text-white mb-8">
-                    Create stunning websites with Pixlr
+                    Create stunning websites with webcraft
                 </h2>
                 
                 <div className="space-y-6">
