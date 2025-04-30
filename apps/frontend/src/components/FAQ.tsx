@@ -5,17 +5,17 @@ export const FAQ = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const questions = [
-    "What is webcraft?",
-    "How does webcraft work?",
-    "Do I need coding skills to use webcraft?",
-    "How fast can I create a website with webcraft?",
+    "What is Webcraft?",
+    "How does Webcraft work?",
+    "Do I need coding skills to use Webcraft?",
+    "How fast can I create a website with Webcraft?",
   ];
 
   const answers = [
-    "webcraft is a platform that simplifies web design using AI.",
-    "webcraft works by leveraging AI to generate customized website designs based on user preferences.",
-    "No, you don't need coding skills. webcraft is designed to be user-friendly for everyone.",
-    "With webcraft, you can create a website in minutes, depending on your requirements.",
+    "Webcraft is a platform that simplifies web design using AI.",
+    "Webcraft works by leveraging AI to generate customized website designs based on user preferences.",
+    "No, you don't need coding skills. Webcraft is designed to be user-friendly for everyone.",
+    "With Webcraft, you can create a website in minutes, depending on your requirements.",
   ];
 
   const toggleAccordion = (index: number) => {

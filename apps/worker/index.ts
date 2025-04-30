@@ -10,11 +10,13 @@ import prisma from "@repo/db/client";
 
 const app = express();
 app.use(express.json());
+
 app.use(cors({
     credentials: true,
-    origin: "http://localhost:5173"
+    origin: process.env.WEBCRAFT_ORIGIN || "http://localhost:5173"
 }));
 
+app.options('*', cors());
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "");
 const model = genAI.getGenerativeModel({

@@ -1,6 +1,6 @@
 import prisma from "@repo/db/client";
 
-const BASE_WORKER_DIR = "/tmp/Pixlr-worker";
+const BASE_WORKER_DIR = "/tmp/react-app";
 
 if (!Bun.file(BASE_WORKER_DIR).exists()) {
     Bun.write(BASE_WORKER_DIR, "");

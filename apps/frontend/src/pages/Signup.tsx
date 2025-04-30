@@ -45,7 +45,7 @@ export const Signup = () => {
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 mb-8">
                 <Code className="h-8 w-8 text-blue-400" />
-                <span className="text-2xl font-bold text-white">webcraft</span>
+                <span className="text-2xl font-bold text-white">Webcraft</span>
               </div>
               <h2 className="text-3xl font-extrabold text-white">
                 Create an account

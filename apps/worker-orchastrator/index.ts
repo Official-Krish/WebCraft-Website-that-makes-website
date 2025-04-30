@@ -2,9 +2,14 @@ import { InstancesClient } from "@google-cloud/compute";
 import express from "express";
 import { InstanceGroupManagersClient } from "@google-cloud/compute";
 import { authMiddleware } from "./middeware";
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
+app.use(cors({
+    credentials: true,
+    origin: "https://webcraft.krishdev.xyz"
+}));
 
 const projectId = process.env.PROJECT_ID;
 const credentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;

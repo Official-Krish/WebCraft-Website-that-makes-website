@@ -8,7 +8,12 @@ import { Writable } from 'stream';
 import { DOMAIN } from './config';
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    credentials: true,
+    origin: process.env.WEBCRAFT_ORIGIN || "http://localhost:5173"
+}));
+
+app.options('*', cors());
 
 const kc = new KubeConfig();
 kc.loadFromDefault();
@@ -124,7 +129,7 @@ async function createPod(name: string) {
         spec: {
             containers: [{
                 name: "code-server",
-                image: "krishanand01/webcraft-code-server:v1",
+                image: "krishanand01/webcraft-code-server:v2",
                 ports: [{
                     containerPort: 8080
                 }, {

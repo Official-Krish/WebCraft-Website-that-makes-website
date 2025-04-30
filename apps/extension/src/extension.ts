@@ -47,8 +47,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(sendToAiTerminal);
 
-	const disposable = vscode.commands.registerCommand('Pixlr-listener.helloWorld', () => {
-		vscode.window.showInformationMessage('Hello World from Pixlr-listener!');
+	const disposable = vscode.commands.registerCommand('webcraft-listener.helloWorld', () => {
+		vscode.window.showInformationMessage('Hello World from webcraft-listener!');
 		vscode.commands.executeCommand("workbench.action.terminal.new");
 		vscode.commands.executeCommand("workbench.action.terminal.sendSequence", {text: "npm run build"});
 		vscode.commands.executeCommand("workbench.action.terminal.sendSequence", {text: "\r"});
