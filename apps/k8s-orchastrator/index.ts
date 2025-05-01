@@ -7,6 +7,8 @@ import * as k8s from "@kubernetes/client-node";
 import { Writable } from 'stream';
 import { DOMAIN } from './config';
 import axios from 'axios';
+import { authMiddleware } from './middlware';
+import { addNewPod, getAllPods, removePod } from './redis';
 
 const app = express();
 app.use(express.json());
@@ -289,8 +291,9 @@ async function assignPodToProject(projectId: string) {
 
 app.use(express.json());
 
-app.get("/worker/:projectId", async (req, res) => {
+app.get("/worker/:projectId", authMiddleware, async (req, res) => {
     const { projectId } = req.params;
+
     const project = await prisma.project.findUnique({
         where: {
             id: projectId
@@ -303,14 +306,7 @@ app.get("/worker/:projectId", async (req, res) => {
     }
 
     await assignPodToProject(projectId);
-
-    axios.post(`https://worker-${projectId}.${DOMAIN}/api/v1/AI/chat`, {
-        prompt: project.description
-    }, {
-        headers: {
-            Authorization: `${req.headers.authorization}`,
-        }
-    });
+    addNewPod(projectId);
 
     res.status(200).json({
         sessionUrl: `https://session-${projectId}.${DOMAIN}`,
@@ -319,6 +315,25 @@ app.get("/worker/:projectId", async (req, res) => {
     })
 });
 
+
+setInterval(async () => {
+    try {
+        const pods = await getAllPods();
+        if (pods.length === 0) {
+            console.log('No pods to clean up');
+            return;
+        }
+        const now = Date.now();
+        for (const pod of pods) {  
+            const age = now - parseInt(pod.startTime!);
+            if (age > 1000 * 60 * 10) {  
+                await removePod(pod.projectId);
+            }
+        }
+    } catch (error) {
+        console.error('Error in pod cleanup interval:', error);
+    }
+}, 1000 * 60 * 5);  
 
 app.listen(9000, () => {
     console.log('K8s Orchestrator is running on port 9000');
