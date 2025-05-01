@@ -7,7 +7,6 @@ import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { Pricing } from "../components/Pricing";
 import { FAQ } from "../components/FAQ";
-import Cookies  from "js-cookie";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 
@@ -17,13 +16,13 @@ export const Prompt2 = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if(!Cookies.get("token")){
+        if(!localStorage.getItem("token")){
             navigate('/signin');
             return;
         }
         const res = await axios.post(`${BACKEND_URL}/api/v1/project/create`, { prompt }, {
             headers: {
-                Authorization: `${Cookies.get("token")}`,
+                Authorization: `${localStorage.getItem("token")}`,
             },
         });
        if (res.status === 200) {

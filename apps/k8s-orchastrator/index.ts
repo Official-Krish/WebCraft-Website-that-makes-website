@@ -8,12 +8,16 @@ import { Writable } from 'stream';
 import { DOMAIN } from './config';
 
 const app = express();
+app.use(express.json());
 app.use(cors({
+    origin: [process.env.WEBCRAFT_ORIGIN || 'http://localhost:5173'],
     credentials: true,
-    origin: process.env.WEBCRAFT_ORIGIN || "http://localhost:5173"
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
+  
+app.set('trust proxy', 1);
 
-app.options('*', cors());
 
 const kc = new KubeConfig();
 kc.loadFromDefault();

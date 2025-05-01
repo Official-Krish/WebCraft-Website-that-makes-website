@@ -42,7 +42,9 @@ userRouter.post("/signup", async ( req,res ) => {
     res.cookie('token', token, {
         httpOnly: true,
         secure: true,
-        sameSite: 'none',        
+        sameSite: 'none',  
+        domain: '.krishdev.xyz',
+        path: '/',      
         maxAge: 60 * 60 * 1000   
     });
     res.status(200).json({ message: "User created successfully", token });
@@ -83,8 +85,10 @@ userRouter.post("/login", async ( req,res ) => {
     res.cookie('token', token, {
         httpOnly: true,
         secure: true,
-        sameSite: 'none',        
-        maxAge: 60 * 60 * 1000   
+        sameSite: 'none',  
+        domain: '.krishdev.xyz',
+        path: '/',      
+        maxAge: 60 * 60 * 1000
     });
     res.status(200).json({ message: "User logged in successfully", token: token, name: user.name });
 })

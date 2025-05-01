@@ -6,7 +6,6 @@ import { ResizableLayout } from "../components/project/resizableComponent"
 import { useLocation } from "react-router-dom"
 import axios from "axios"
 import { K8S_ORCHASTRATOR_URL } from "../config"
-import Cookies from "js-cookie"
 
 
 export const Project = () => {
@@ -20,7 +19,7 @@ export const Project = () => {
     try {
       const res = await axios.get(`${K8S_ORCHASTRATOR_URL}/worker/${projectId}`, {
         headers: {
-          Authorization: `${Cookies.get("token")}`,
+          Authorization: `${localStorage.getItem("token")}`,
         },
       }) 
       setSessionUrl(res.data.sessionUrl);

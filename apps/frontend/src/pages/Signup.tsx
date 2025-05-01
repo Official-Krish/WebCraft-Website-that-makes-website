@@ -28,8 +28,8 @@ export const Signup = () => {
             withCredentials: true
         });
         if(response.status === 200){
-            localStorage.setItem("name", name);
-            navigate('/');
+          localStorage.setItem("token", response.data.token);
+          navigate('/');
         }
       } catch (error) {
         console.log(error);
