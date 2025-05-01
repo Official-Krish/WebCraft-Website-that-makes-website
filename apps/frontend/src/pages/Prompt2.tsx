@@ -20,11 +20,13 @@ export const Prompt2 = () => {
             navigate('/signin');
             return;
         }
-        const res = await axios.post(`${BACKEND_URL}/api/v1/project/create`, { prompt }, {
+        const res = await axios.post(`${BACKEND_URL}/project/create`, { prompt }, {
             headers: {
                 Authorization: `${localStorage.getItem("token")}`,
             },
         });
+        alert(res.status);
+        return;
        if (res.status === 200) {
             navigate(`/project/${res.data.projectId}?prompt=${prompt}`), {
                 state: { projectId: res.data.projectId, prompt: prompt },

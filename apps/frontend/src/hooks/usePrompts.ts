@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 
@@ -19,7 +18,7 @@ interface Action {
 
 export const usePrompts = (projectId: string) => {
     const [prompts, setPrompts] = useState<Prompt[]>([]);
-    const token = Cookies.get("token");
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
         async function fetchPrompts() {

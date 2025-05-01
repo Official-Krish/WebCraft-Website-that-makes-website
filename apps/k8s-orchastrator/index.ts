@@ -6,6 +6,7 @@ import { KubeConfig } from "@kubernetes/client-node";
 import * as k8s from "@kubernetes/client-node";
 import { Writable } from 'stream';
 import { DOMAIN } from './config';
+import axios from 'axios';
 
 const app = express();
 app.use(express.json());
@@ -302,6 +303,15 @@ app.get("/worker/:projectId", async (req, res) => {
     }
 
     await assignPodToProject(projectId);
+
+    axios.post(`https://worker-${projectId}.${DOMAIN}/api/v1/AI/chat`, {
+        prompt: project.description
+    }, {
+        headers: {
+            Authorization: `${req.headers.authorization}`,
+        }
+    });
+
     res.status(200).json({
         sessionUrl: `https://session-${projectId}.${DOMAIN}`,
         previewUrl: `https://preview-${projectId}.${DOMAIN}`,

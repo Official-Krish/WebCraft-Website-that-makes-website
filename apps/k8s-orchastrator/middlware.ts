@@ -19,7 +19,7 @@ export async function authMiddleware(
   next: NextFunction
 ) {
   try {
-    const token = req.headers["authorization"]?.split(" ")[1];
+    const token = req.headers["authorization"]?.split(" ")[1];;
 
     if (!token) {
       res.status(401).json({ message: "No token provided" });
@@ -29,7 +29,6 @@ export async function authMiddleware(
     // Debug logs
     console.log("Received token:", token);
 
-    console.log("JWT secret:", process.env.JWT_SECRET);
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "mysecret", {
       algorithms: ["HS256"],
     });

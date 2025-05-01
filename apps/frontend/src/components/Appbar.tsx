@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { cn } from "../lib/utils";
 import { Menu } from "lucide-react";
-import Cookies from 'js-cookie';
 import { UserDropdown } from "./DropDown";
 
 const Appbar = () => {
@@ -44,7 +43,7 @@ const Appbar = () => {
           <a href="#testimonials" className="text-sm text-foreground/70 hover:text-foreground transition-colors">Testimonials</a>
           <a href="#pricing" className="text-sm text-foreground/70 hover:text-foreground transition-colors">Pricing</a>
         </nav>
-        {Cookies.get("token") ? <UserDropdown /> : 
+        {localStorage.getItem("token") ? <UserDropdown /> : 
           <div className="flex items-center space-x-4">
             <Button variant="outline" size="sm" className="hidden md:flex hover:bg-white/5" onClick={() => window.location.href = "/signin"}>
               Sign In

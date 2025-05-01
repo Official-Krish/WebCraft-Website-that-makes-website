@@ -19,7 +19,8 @@ export const Signin = () => {
                 withCredentials: true
             })
             if (reponse.status === 200) {
-                localStorage.setItem("token", reponse.data.token);
+                localStorage.setItem("token", `Bearer ${reponse.data.token}`);
+                localStorage.setItem("name", reponse.data.name);
                 navigate ('/');
             }
         } catch (error) {

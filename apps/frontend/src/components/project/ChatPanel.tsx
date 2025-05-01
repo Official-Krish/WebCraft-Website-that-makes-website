@@ -6,7 +6,6 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import axios from 'axios';
 import { usePrompts } from '../../hooks/usePrompts';
-import Cookies from 'js-cookie';
 
 export interface Message {
   id: string;
@@ -74,7 +73,7 @@ export const ChatPanel = ({projectId, workerUrl}: { projectId: string, workerUrl
                 projectId: projectId
               }, {
                 headers: {
-                  Authorization: `${Cookies.get("token")}`,
+                  Authorization: `${localStorage.getItem('token')}`
                 },
               });
               setInput('');

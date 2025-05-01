@@ -1,5 +1,4 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import Cookies from 'js-cookie';
 
 export const UserDropdown = () => {
     return (
@@ -19,7 +18,7 @@ export const UserDropdown = () => {
                     </button>
                 </DropdownMenuItem>
                 <DropdownMenuItem  className="text-white cursor-pointer" onClick={() => {
-                    Cookies.remove("token");
+                    localStorage.removeItem("token");
                     localStorage.removeItem("name");
                     window.location.reload();
                 }}>

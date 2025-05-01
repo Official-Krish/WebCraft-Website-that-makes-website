@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+require("dotenv").config();
 
 declare global {
   namespace Express {
@@ -18,8 +19,7 @@ export async function authMiddleware(
   next: NextFunction
 ) {
   try {
-    const token = req.headers["authorization"];
-
+    const token = req.headers["authorization"]?.split(" ")[1];
     if (!token) {
       res.status(401).json({ message: "No token provided" });
       return;
@@ -28,15 +28,15 @@ export async function authMiddleware(
     // Debug logs
     console.log("Received token:", token);
 
-
+    console.log("JWT secret:", process.env.JWT_SECRET);
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "mysecret", {
-      algorithms: ["RS256"]
+      algorithms: ["HS256"],
     });
 
     console.log("Decoded token:", decoded);
 
     // Extract user ID from the decoded token
-    const userId = (decoded as any).payload.sub;
+    const userId = (decoded as any).userId;
 
     if (!userId) {
       console.error("No user ID in token payload");
