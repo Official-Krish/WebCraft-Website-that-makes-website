@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: webcraft-frontend
-          image: krishanand01/webcraft-fe:v2
+          image: krishanand01/webcraft-frontend:v1
           ports:
             - containerPort: 5173
           volumeMounts:
@@ -46,12 +46,12 @@ spec:
     spec:
       containers:
         - name: webcraft-primary-backend
-          image: krishanand01/webcraft-primary-backend:v2
+          image: krishanand01/webcraft-primary-be:v2
           ports:
             - containerPort: 3000
           volumeMounts:
             - name: env-file
-              mountPath: /app/apps/backend/.env
+              mountPath: /app/apps/primary-backend/.env
               subPath: env
       volumes:
         - name: env-file
@@ -76,7 +76,7 @@ spec:
     spec:
       containers:
         - name: webcraft-k8s-orchastrator
-          image: krishanand01/webcraft-k8s-orchastrator:v1
+          image: krishanand01/webcraft-k8s-orchastrator:v2
           ports:
             - containerPort: 9000
           volumeMounts:
@@ -87,3 +87,29 @@ spec:
         - name: env-file
           secret:
             secretName: webcraft-secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+      volumes:
+      - name: redis-data
+        emptyDir: {}
