@@ -74,6 +74,7 @@ spec:
       labels:
         app: webcraft-k8s-orchastrator
     spec:
+      serviceAccountName: orchestrator-sa
       containers:
         - name: webcraft-k8s-orchastrator
           image: krishanand01/webcraft-k8s-orchastrator:v2
