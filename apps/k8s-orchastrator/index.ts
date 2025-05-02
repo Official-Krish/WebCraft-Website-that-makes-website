@@ -6,14 +6,13 @@ import { KubeConfig } from "@kubernetes/client-node";
 import * as k8s from "@kubernetes/client-node";
 import { Writable } from 'stream';
 import { DOMAIN } from './config';
-import axios from 'axios';
 import { authMiddleware } from './middlware';
 import { addNewPod, getAllPods, removePod } from './redis';
 
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: [process.env.WEBCRAFT_ORIGIN || 'http://localhost:5173'],
+    origin: ["https://webcraft.krishdev.xyz" , "http://localhost:5173"],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -172,6 +171,14 @@ async function createPod(name: string) {
                             name: "worker-secret",
                             key: "DATABASE_URL"
                         }
+                    },  
+                }, {
+                    name: "JWT_SECRET",
+                    valueFrom: {
+                        secretKeyRef: {
+                            name: "worker-secret",
+                            key: "JWT_SECRET"
+                        }
                     }
                 }]
             }]
@@ -327,6 +334,11 @@ setInterval(async () => {
         for (const pod of pods) {  
             const age = now - parseInt(pod.startTime!);
             if (age > 1000 * 60 * 10) {  
+                await k8sApi.deleteNamespacedPod({ name: pod.projectId, namespace: "user-apps" });
+                await k8sApi.deleteNamespacedService({ name: `session-${pod.projectId}`, namespace: "user-apps" });
+                await k8sApi.deleteNamespacedService({ name: `preview-${pod.projectId}`, namespace: "user-apps" });
+                await k8sApi.deleteNamespacedService({ name: `worker-${pod.projectId}`, namespace: "user-apps" });
+                await networkingApi.deleteNamespacedIngress({name: `ingress-${pod.projectId}`, namespace: "user-apps"});
                 await removePod(pod.projectId);
             }
         }
