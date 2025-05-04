@@ -332,6 +332,10 @@ setInterval(async () => {
         }
         const now = Date.now();
         for (const pod of pods) {  
+            if (!pod.startTime || isNaN(Number(pod.startTime))) {
+                console.warn(`Invalid startTime for pod: ${JSON.stringify(pod)}`);
+                continue;
+            }
             const age = now - parseInt(pod.startTime!);
             if (age > 1000 * 60 * 10) {  
                 await k8sApi.deleteNamespacedPod({ name: pod.projectId, namespace: "user-apps" });
@@ -345,7 +349,7 @@ setInterval(async () => {
     } catch (error) {
         console.error('Error in pod cleanup interval:', error);
     }
-}, 1000 * 60 * 5);  
+}, 1000 * 60 * 10);  
 
 app.listen(9000, () => {
     console.log('K8s Orchestrator is running on port 9000');

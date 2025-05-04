@@ -24,7 +24,7 @@ export const Project = () => {
   const projectId = location.state?.projectId || urlProjectId;
   const prompt = location.state?.prompt || promptParam;
 
-  async function getIframeUrl() {
+  async function GetURLs() {
     try {
       if (!projectId) {
         alert("Project ID is not provided.");
@@ -45,13 +45,18 @@ export const Project = () => {
         alert("Worker URL, Session URL, or Preview URL is not available.");
         return;
       }
-      axios.post(`${workerUrl}/api/v1/AI/chat`, {
+      const worker = axios.post(`${workerUrl}/api/v1/AI/chat`, {
         prompt: prompt,
+        projectId: projectId,
       }, {
         headers: {
           Authorization: `${localStorage.getItem("token")}`,
         },
       })
+      if (!worker) {
+        alert("Worker is not available.");
+        return;
+      }
       setLoading(false);
     } catch (error) {
       console.error("Error fetching iframe URL:", error);
@@ -59,28 +64,28 @@ export const Project = () => {
   }
 
   useEffect(() => {
-    getIframeUrl()
-  })
+    GetURLs();
+  },[]);
 
-    return (
-        <div className="h-full w-full">
-            <GridBackground>
-                <div className="px-4 py-3 w-full h-full">
-                  {Loading && <div className="flex items-center justify-center h-full">
-                    <div className="animate-spin rounded-full border-t-2 border-b-2 border-primary/50 h-24 w-24 border-solid"></div>
-                  </div>}
-                  {!Loading && 
-                    <ResizableLayout
-                      leftPanel={<ChatPanel projectId={projectId} workerUrl={workerUrl!}/>}
-                      rightPanel={<EditorPanel sessionUrl={sessionUrl!} previewUrl={previewUrl!} />}
-                      defaultLeftWidth={30}
-                      minLeftWidth={20}
-                      maxLeftWidth={30}
-                    />
-                  }
-                  
-                </div>
-            </GridBackground>
-        </div>
-    )
+  return (
+      <div className="h-full w-full">
+          <GridBackground>
+              <div className="px-4 py-3 w-full h-full">
+                {Loading && <div className="flex items-center justify-center h-full">
+                  <div className="animate-spin rounded-full border-t-2 border-b-2 border-primary/50 h-24 w-24 border-solid"></div>
+                </div>}
+                {!Loading && 
+                  <ResizableLayout
+                    leftPanel={<ChatPanel projectId={projectId} workerUrl={workerUrl!}/>}
+                    rightPanel={<EditorPanel sessionUrl={sessionUrl!} previewUrl={previewUrl!} />}
+                    defaultLeftWidth={30}
+                    minLeftWidth={20}
+                    maxLeftWidth={30}
+                  />
+                }
+                
+              </div>
+          </GridBackground>
+      </div>
+  )
 }

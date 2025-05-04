@@ -34,5 +34,5 @@ export const usePrompts = (projectId: string) => {
             clearInterval(interval);
         };
     }, []);
-    return prompts;
+    return prompts ?? [];
 }

@@ -17,7 +17,7 @@ export interface Message {
 
 export const ChatPanel = ({projectId, workerUrl}: { projectId: string, workerUrl: string }) => {
   const [input, setInput] = useState('');
-  const prompts = usePrompts(projectId);
+  const prompts = usePrompts(projectId) ?? [];
 
   return (
     <motion.div 
@@ -26,29 +26,40 @@ export const ChatPanel = ({projectId, workerUrl}: { projectId: string, workerUrl
       transition={{ duration: 0.3 }}
       className="flex flex-col h-[calc(100vh-105px)] bg-panel rounded-l-lg overflow-hidden"
     >
-      
-      <div className="flex-1 overflow-y-auto p-2 space-y-2" style={{ scrollbarWidth: 'thin' }}>
-        {prompts.filter((prompt) => prompt.type === "USER").map((prompt) => (
-          <div key={prompt.id}>
-            <span key={prompt.id} className="flex text-lg gap-2">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center ml-3">
-                <MessageSquare size={16} className="text-white" />
-              </div>
-              {prompt.content}
-            </span>
-            {prompt.actions.map((action) => (
-              <div key={action.id} className="flex border-2 bg-gray-500/10 p-2 rounded-md">
-                <div className="flex items-center gap-2">
-                  <div className="inline-block rounded-full border dark:border-gray-300/20 p-1 h-fit">
-                    <div className="w-2 h-2 rounded-full flex-shrink-0 bg-teal-300 dark:bg-teal-300/30" />
-                  </div>
-                  <p>{action.content}</p>
-                </div>
-              </div>
-            ))}
+      {prompts.length === 0 &&
+        <div className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center">
+            <MessageSquare size={32} className="text-primary/20" />
+            <p className="text-primary/20 text-lg mt-2">No messages yet</p>
+            <p className="text-primary/20 text-sm">Getting things ready...</p>
           </div>
-        ))}
-      </div>
+        </div>
+      }
+      
+      {prompts.length != 0 && 
+        <div className="flex-1 overflow-y-auto p-2 space-y-2" style={{ scrollbarWidth: 'thin' }}>
+          {prompts.filter((prompt) => prompt.type === "USER").map((prompt) => (
+            <div key={prompt.id}>
+              <span key={prompt.id} className="flex text-lg gap-2">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center ml-3">
+                  <MessageSquare size={16} className="text-white" />
+                </div>
+                {prompt.content}
+              </span>
+              {prompt.actions.map((action) => (
+                <div key={action.id} className="flex border-2 bg-gray-500/10 p-2 rounded-md">
+                  <div className="flex items-center gap-2">
+                    <div className="inline-block rounded-full border dark:border-gray-300/20 p-1 h-fit">
+                      <div className="w-2 h-2 rounded-full flex-shrink-0 bg-teal-300 dark:bg-teal-300/30" />
+                    </div>
+                    <p>{action.content}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      }
       
       <div>
         <div 

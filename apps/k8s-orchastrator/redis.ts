@@ -14,6 +14,7 @@ export async function addNewPod(projectId: string): Promise<void> {
             `POD_START:${projectId}`, 
             Date.now().toString()
         );
+        console.log(`Pod added for project ${projectId} at ${Date.now()}`);
     } catch (error) {
         console.error(`Error adding pod for project ${projectId}:`, error);
         throw error;
@@ -23,6 +24,7 @@ export async function addNewPod(projectId: string): Promise<void> {
 export async function removePod(projectId: string): Promise<void> {
     try {
         await redisClient.del(`POD_START:${projectId}`);
+        console.log(`Pod removed for project ${projectId}`);
     } catch (error) {
         console.error(`Error removing pod for project ${projectId}:`, error);
         throw error;
