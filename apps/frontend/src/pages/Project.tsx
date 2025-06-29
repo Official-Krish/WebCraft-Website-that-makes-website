@@ -2,19 +2,18 @@ import { useEffect, useState } from "react"
 import GridBackground from "../components/BackgroundGrid"
 import { ChatPanel } from "../components/project/ChatPanel"
 import { EditorPanel } from "../components/project/EditorPanel"
-import { ResizableLayout } from "../components/project/resizableComponent"
+import { ProjectLayout } from "../components/project/resizableComponent"
 import { useLocation } from "react-router-dom"
 import axios from "axios"
 import { K8S_ORCHASTRATOR_URL } from "../config"
 import { useParams, useSearchParams } from 'react-router-dom';
 
 
-
 export const Project = () => {
   const location = useLocation();
-  const [workerUrl, setWorkerUrl] = useState<string | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [sessionUrl, setSessionUrl] = useState<string | null>(null)
+  const [workerUrl, setWorkerUrl] = useState<string | null>("http://localhost:4000");
+  const [previewUrl, setPreviewUrl] = useState<string | null>("http://localhost:5173")
+  const [sessionUrl, setSessionUrl] = useState<string | null>("http://localhost:8080");
   const [Loading, setLoading] = useState(false);
   
   const { projectId: urlProjectId } = useParams(); 
@@ -68,19 +67,16 @@ export const Project = () => {
   },[]);
 
   return (
-      <div className="h-full w-full">
+      <div className="mt-10">
           <GridBackground>
-              <div className="px-4 py-3 w-full h-full">
+              <div className="px-4 py-3">
                 {Loading && <div className="flex items-center justify-center h-full">
                   <div className="animate-spin rounded-full border-t-2 border-b-2 border-primary/50 h-24 w-24 border-solid"></div>
                 </div>}
                 {!Loading && 
-                  <ResizableLayout
+                  <ProjectLayout
                     leftPanel={<ChatPanel projectId={projectId} workerUrl={workerUrl!}/>}
                     rightPanel={<EditorPanel sessionUrl={sessionUrl!} previewUrl={previewUrl!} />}
-                    defaultLeftWidth={30}
-                    minLeftWidth={20}
-                    maxLeftWidth={30}
                   />
                 }
                 

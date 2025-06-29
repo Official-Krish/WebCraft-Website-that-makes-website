@@ -14,7 +14,7 @@ export const EditorPanel = ({ sessionUrl, previewUrl }: { sessionUrl: string, pr
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col h-full bg-black rounded-r-lg overflow-hidden shadow-glow"
+      className="flex flex-col h-full bg-black rounded-r-lg overflow-hidden shadow-glow pt-3"
     >
       <div className="px-4 py-3 flex items-center justify-between ">
         <div className="flex items-center space-x-1 bg-black p-1 rounded-lg">
@@ -59,7 +59,7 @@ export const EditorPanel = ({ sessionUrl, previewUrl }: { sessionUrl: string, pr
               transition={{ duration: 0.2 }}
               className="h-full p-4"
             >
-              <iframe src={sessionUrl} width="980" height="624" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+              <iframe src={sessionUrl} style={{ width: '980px', height: '624px' }}></iframe>
             </motion.div>
           ) : (
             <motion.div
