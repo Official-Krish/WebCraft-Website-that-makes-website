@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: webcraft-frontend
-          image: krishanand01/webcraft-frontend:v1
+          image: krishanand01/webcraft-frontend:v3
           ports:
             - containerPort: 5173
           volumeMounts:
@@ -77,7 +77,7 @@ spec:
       serviceAccountName: orchestrator-sa
       containers:
         - name: webcraft-k8s-orchastrator
-          image: krishanand01/webcraft-k8s-orchastrator:v2
+          image: krishanand01/webcraft-k8s-orchastrator:v1
           ports:
             - containerPort: 9000
           volumeMounts:

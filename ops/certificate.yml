@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: webcraft-frontend-tls
   issuerRef:
-    name: letsencrypt-prod
+    name: letsencrypt-staging
     kind: ClusterIssuer
   commonName: webcraft.krishdev.xyz
   dnsNames:
@@ -20,7 +20,7 @@ metadata:
 spec:
   secretName: webcraft-primary-backend-tls
   issuerRef:
-    name: letsencrypt-prod
+    name: letsencrypt-staging
     kind: ClusterIssuer
   commonName: api.webcraft.krishdev.xyz
   dnsNames:
@@ -34,7 +34,7 @@ metadata:
 spec:
   secretName: webcraft-orchastrator-tls
   issuerRef:
-    name: letsencrypt-prod
+    name: letsencrypt-staging
     kind: ClusterIssuer
   commonName: webcraft.k8s-orchastrator.krishdev.xyz
   dnsNames:

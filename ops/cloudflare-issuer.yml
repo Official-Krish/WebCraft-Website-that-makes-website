@@ -5,12 +5,14 @@ metadata:
   namespace: user-apps
 spec:
   acme:
-    email: krishanand974@gmail.com         
+    email: krishanand974@email.com
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:
-    - http01:
-        ingress:
-          class: nginx
-
+      - dns01:
+          cloudflare:
+            email: krishanand974@email.com
+            apiTokenSecretRef:
+              name: cloudflare-api-token-secret
+              key: api-token
