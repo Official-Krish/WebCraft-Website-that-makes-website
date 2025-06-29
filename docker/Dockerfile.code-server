@@ -15,6 +15,12 @@ RUN git clone https://github.com/Official-Krish/Base-React-Project /tmp/react-ap
 WORKDIR /tmp/react-app
 RUN npm install
 
+# Create Vite config for container environment
+RUN echo 'import { defineConfig } from "vite" \n import react from "@vitejs/plugin-react" \n import tailwindcss from "@tailwindcss/vite" \n\nexport default defineConfig \n ({\n  plugins: [react(), tailwindcss()], \n server: {\n    host: "0.0.0.0",\n    port: 5173,\n    strictPort: true\n  }\n})' > vite.config.ts
+
+# Also modify package.json to ensure dev script uses correct host
+RUN npm pkg set scripts.dev="vite --host 0.0.0.0 --port 5173"
+
 # Download and install the VS Code extension
 RUN wget https://github.com/Official-Krish/WebCraft-Extension/raw/refs/heads/main/webcraft-listener-0.0.1.vsix
 RUN code-server --install-extension webcraft-listener-0.0.1.vsix
@@ -22,7 +28,7 @@ RUN code-server --install-extension webcraft-listener-0.0.1.vsix
 # Set proper ownership
 RUN chown -R coder:coder /tmp/react-app
 
-# Revert to the code-server default user
+# Revert to the code-server default user  
 USER coder
 
 # Configure VS Code settings
