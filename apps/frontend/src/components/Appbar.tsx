@@ -1,84 +1,81 @@
-import { useState, useEffect } from "react";
-import { Button } from "./ui/button";
-import { cn } from "../lib/utils";
-import { Menu } from "lucide-react";
-import { UserDropdown } from "./DropDown";
+import { motion } from 'framer-motion';
+import { Crown, User } from 'lucide-react';
+import UserProfileDropdown from './UserDropdown';
+import { useState } from 'react';
 
 const Appbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const offset = window.scrollY;
-      if (offset > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const headerVariants = {
+    hidden: { y: -50, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
 
   return (
-    <header 
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 md:px-8 border-b border-white/20",
-        isScrolled ? "bg-black/80 backdrop-blur-lg border-b border-white/5" : "bg-transparent"
-      )}
+    <motion.header 
+      className="fixed top-0 right-0 left-0 bg-black/80 backdrop-blur-lg border-b border-gray-800 z-20"
+      variants={headerVariants}
+      initial="hidden"
+      animate="visible"
     >
-      <div className="container max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center space-x-2 cursor-pointer" onClick={() => window.location.href = "/home"}>
-          <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center neon-glow">
-            <span className="font-bold text-white">AI</span>
-          </div>
-          <span className="text-lg font-bold">WebCraft</span>
+      <div className="flex items-center justify-between px-6 py-3">
+        <div className="flex items-center gap-4">
+          <motion.div 
+            className="flex items-center gap-2"
+            whileHover={{ scale: 1.05 }}
+          >
+            <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-md flex items-center justify-center">
+              <span className="text-white font-bold text-xs">W</span>
+            </div>
+            <span className="text-white font-semibold">WebcraftAI</span>
+          </motion.div>
         </div>
-        
-        <nav className="hidden md:flex items-center space-x-8">
-          <a href="#features" className="text-sm text-foreground/70 hover:text-foreground transition-colors">Features</a>
-          <a href="#demo" className="text-sm text-foreground/70 hover:text-foreground transition-colors">Demo</a>
-          <a href="#testimonials" className="text-sm text-foreground/70 hover:text-foreground transition-colors">Testimonials</a>
-          <a href="#pricing" className="text-sm text-foreground/70 hover:text-foreground transition-colors">Pricing</a>
-        </nav>
-        {localStorage.getItem("token") ? <UserDropdown /> : 
-          <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm" className="hidden md:flex hover:bg-white/5" onClick={() => window.location.href = "/signin"}>
-              Sign In
-            </Button>
-            <Button size="sm" className="neon-glow hover:bg-primary/90">
-              Try For Free
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="md:hidden" 
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-          </div>
-        }
+
+        <div className="flex items-center gap-3">
+          {/* Profile */}
+          <motion.button
+            className="p-2 text-gray-400 hover:text-white transition-colors"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              if (localStorage.getItem("token")){
+                setIsProfileOpen(true);
+              } else {
+                window.location.href = "/signin"; 
+              }
+            }}
+          >
+            {localStorage.getItem("token") ? <div className='flex items-center'>
+              <User size={20} className='mr-1'/>
+              My Account
+            </div> : 
+              <div>
+                SignIn
+              </div>
+            }
+            
+          </motion.button>
+
+          <UserProfileDropdown 
+              isOpen={isProfileOpen} 
+              onClose={() => setIsProfileOpen(false)} 
+          />
+          
+          {/* Upgrade Button */}
+          <motion.button
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-all"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Crown size={14} />
+            Upgrade
+          </motion.button>
+        </div>
       </div>
-      
-      {/* Mobile menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-lg border-b border-white/5 animate-fade-in">
-          <nav className="container max-w-7xl mx-auto py-4 px-6 flex flex-col space-y-4">
-            <a href="#features" className="text-sm py-2 text-foreground/70 hover:text-foreground transition-colors">Features</a>
-            <a href="#demo" className="text-sm py-2 text-foreground/70 hover:text-foreground transition-colors">Demo</a>
-            <a href="#testimonials" className="text-sm py-2 text-foreground/70 hover:text-foreground transition-colors">Testimonials</a>
-            <a href="#pricing" className="text-sm py-2 text-foreground/70 hover:text-foreground transition-colors">Pricing</a>
-            <Button variant="outline" size="sm" className="w-full mt-2 hover:bg-white/5">
-              Sign In
-            </Button>
-          </nav>
-        </div>
-      )}
-    </header>
+    </motion.header>
   );
 };
-
 export default Appbar;

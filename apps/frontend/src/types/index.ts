@@ -33,3 +33,10 @@ export interface FileViewerProps {
   file: FileItem | null;
   onClose: () => void;
 }
+
+export interface Project {
+  id: String  
+  description: String
+  createdAt: Date 
+  updatedAt: Date 
+}
