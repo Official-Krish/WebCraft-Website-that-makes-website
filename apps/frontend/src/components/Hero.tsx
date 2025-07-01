@@ -6,7 +6,7 @@ import axios from 'axios';
 import { BACKEND_URL } from '../config';
 
 const Hero = () => {
-    const [inputValue, setInputValue] = useState('');
+    const [prompt, setPrompt] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const navigate = useNavigate();
 
@@ -49,6 +49,11 @@ const Hero = () => {
             navigate('/signin');
             return;
         }
+        if (!prompt) {
+            alert("Please enter a prompt");
+            return;
+        }
+
         const res = await axios.post(`${BACKEND_URL}/project/create`, { prompt }, {
             headers: {
                 Authorization: `${localStorage.getItem("token")}`,
@@ -101,7 +106,7 @@ const Hero = () => {
                 animate="visible"
             >
                 <motion.h1 className="text-6xl md:text-8xl font-bold text-white mb-6 flex flex-wrap justify-center gap-2">
-                    {"Make Anything".split("").map((letter, index) => (
+                    {"Create without limits".split("").map((letter, index) => (
                         <motion.span
                             key={index}
                             variants={letterVariants}
@@ -155,8 +160,8 @@ const Hero = () => {
                         
                             <input
                                 type="text"
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
+                                value={prompt}
+                                onChange={(e) => setPrompt(e.target.value)}
                                 onFocus={() => setIsFocused(true)}
                                 onBlur={() => setIsFocused(false)}
                                 placeholder="build a habit tracking app with streak visualization and social fea"

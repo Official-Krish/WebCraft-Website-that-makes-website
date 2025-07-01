@@ -24,8 +24,9 @@ const Appbar = () => {
       <div className="flex items-center justify-between px-6 py-3">
         <div className="flex items-center gap-4">
           <motion.div 
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 cursor-pointer" 
             whileHover={{ scale: 1.05 }}
+            onClick={() => window.location.href = '/home'}
           >
             <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-md flex items-center justify-center">
               <span className="text-white font-bold text-xs">W</span>

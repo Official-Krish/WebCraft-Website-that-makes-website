@@ -47,7 +47,11 @@ const Sidebar= () => {
     useEffect(() => {
         const getProjects = async () => {
             try{
-                const res = await axios.get(`${BACKEND_URL}/project/projects`);
+                const res = await axios.get(`${BACKEND_URL}/project/projects`, {
+                    headers: {
+                        Authorization: localStorage.getItem('token')
+                    }
+                });
                 setProjects(res.data);
             } catch(e){
                 console.log("Error Fetching data", e);

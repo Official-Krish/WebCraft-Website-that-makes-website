@@ -49,7 +49,11 @@ const UserProfileDropdown = ({ isOpen, onClose }: UserProfileDropdownProps) => {
     useEffect(() => {
         const getUserDetails = async () => {
             try {
-                const res = await axios.get(`${BACKEND_URL}/user/getDetails`)
+                const res = await axios.get(`${BACKEND_URL}/user/getDetails`, {
+                    headers: {
+                        Authorization: localStorage.getItem('token')
+                    }
+                })
                 setUser(res.data);
             } catch (e) {
                 console.error("Error Fetching User Details", e)
