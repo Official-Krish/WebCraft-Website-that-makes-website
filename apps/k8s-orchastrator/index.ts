@@ -7,7 +7,6 @@ import * as k8s from "@kubernetes/client-node";
 import { Writable } from 'stream';
 import { DOMAIN } from './config';
 import { authMiddleware } from './middlware';
-import { addNewPod, getAllPods, removePod } from './redis';
 
 const app = express();
 app.use(express.json());
@@ -40,11 +39,11 @@ export async function createIngressForProject(projectId: string) {
             name: `ingress-${projectId}`,
             namespace: "user-apps",
             annotations: {
-                "kubernetes.io/ingress.class": "nginx", 
-                "cert-manager.io/cluster-issuer": "letsencrypt-prod", 
+                "cert-manager.io/cluster-issuer": "letsencrypt-prod",
             },
         },
         spec: {
+            ingressClassName: "nginx",
             rules: [
                 {
                     host: `session-${projectId}.${DOMAIN}`,
@@ -111,7 +110,7 @@ export async function createIngressForProject(projectId: string) {
                         `preview-${projectId}.${DOMAIN}`,
                         `worker-${projectId}.${DOMAIN}`,
                     ],
-                    secretName: `cert-${projectId}`,
+                    secretName: "wildcard-cert",
                 },
             ],
         },
@@ -139,8 +138,12 @@ async function createPod(name: string) {
                 ports: [{
                     containerPort: 8080
                 }, {
-                    containerPort: 8081
+                    containerPort: 5173
                 }],
+                env: [{
+                    name: "WS_RELAYER_URL",
+                    value: "ws://localhost:9093"
+                }]
             }, {
                 name: "ws-relayer",
                 image: "krishanand01/webcraft-relayer-ws:v2",
@@ -212,7 +215,7 @@ async function createPod(name: string) {
             },
             ports: [{
                 port: 8080,
-                targetPort: 8081,
+                targetPort: 5173,
                 protocol: "TCP",
                 name: "preview"
             }]
@@ -244,7 +247,7 @@ async function checkPodIsReady(name: string) {
         if (pod.status?.phase === "Running") {
             return;
         }
-        if(attempts > 20) {
+        if(attempts > 40) {
             throw new Error("Pod is not ready");
         }
         await new Promise(resolve => setTimeout(resolve, 3000));
@@ -292,7 +295,8 @@ async function assignPodToProject(projectId: string) {
     console.log("Pod is ready finally");
     console.log(stdout);
     console.log(stderr);
-    createIngressForProject(projectId);
+    await createIngressForProject(projectId);
+    console.log("Ingress created for project");
     await new Promise(resolve => setTimeout(resolve, 10000));
 }
 
@@ -313,7 +317,6 @@ app.get("/worker/:projectId", authMiddleware, async (req, res) => {
     }
 
     await assignPodToProject(projectId);
-    addNewPod(projectId);
 
     res.status(200).json({
         sessionUrl: `https://session-${projectId}.${DOMAIN}`,
@@ -321,35 +324,7 @@ app.get("/worker/:projectId", authMiddleware, async (req, res) => {
         workerUrl: `https://worker-${projectId}.${DOMAIN}`,
     })
 });
-
-
-setInterval(async () => {
-    try {
-        const pods = await getAllPods();
-        if (pods.length === 0) {
-            console.log('No pods to clean up');
-            return;
-        }
-        const now = Date.now();
-        for (const pod of pods) {  
-            if (!pod.startTime || isNaN(Number(pod.startTime))) {
-                console.warn(`Invalid startTime for pod: ${JSON.stringify(pod)}`);
-                continue;
-            }
-            const age = now - parseInt(pod.startTime!);
-            if (age > 1000 * 60 * 10) {  
-                await k8sApi.deleteNamespacedPod({ name: pod.projectId, namespace: "user-apps" });
-                await k8sApi.deleteNamespacedService({ name: `session-${pod.projectId}`, namespace: "user-apps" });
-                await k8sApi.deleteNamespacedService({ name: `preview-${pod.projectId}`, namespace: "user-apps" });
-                await k8sApi.deleteNamespacedService({ name: `worker-${pod.projectId}`, namespace: "user-apps" });
-                await networkingApi.deleteNamespacedIngress({name: `ingress-${pod.projectId}`, namespace: "user-apps"});
-                await removePod(pod.projectId);
-            }
-        }
-    } catch (error) {
-        console.error('Error in pod cleanup interval:', error);
-    }
-}, 1000 * 60 * 10);  
+  
 
 app.listen(9000, () => {
     console.log('K8s Orchestrator is running on port 9000');

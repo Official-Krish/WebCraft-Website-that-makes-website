@@ -19,27 +19,21 @@ export async function authMiddleware(
   next: NextFunction
 ) {
   try {
-    const token = req.headers["authorization"]?.split(" ")[1];;
+    const token = req.headers["authorization"]?.split(" ")[1];
 
     if (!token) {
       res.status(401).json({ message: "No token provided" });
       return;
     }
 
-    // Debug logs
-    console.log("Received token:", token);
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "mysecret", {
       algorithms: ["HS256"],
     });
-
-    console.log("Decoded token:", decoded);
 
     // Extract user ID from the decoded token
     const userId = (decoded as any).userId;
 
     if (!userId) {
-      console.error("No user ID in token payload");
       res.status(403).json({ message: "Invalid token payload" });
       return;
     }
