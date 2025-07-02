@@ -101,7 +101,7 @@ export const Signin = () => {
             {/* Right Side - Form */}
             <div className="flex-1 bg-black flex items-center justify-center p-8">
                 <motion.div
-                    className="w-full max-w-md"
+                    className="w-full max-w-md relative"
                     initial={{ opacity: 0, x: 50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}

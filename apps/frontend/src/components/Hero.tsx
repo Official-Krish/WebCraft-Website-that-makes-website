@@ -112,7 +112,7 @@ const Hero = () => {
                             variants={letterVariants}
                             whileHover={{ 
                                 scale: 1.1, 
-                                color: "#A855F7",
+                                color: "#308eed",
                                 textShadow: "0 0 20px rgba(168, 85, 247, 0.5)"
                             }}
                             className="cursor-pointer"
@@ -142,12 +142,12 @@ const Hero = () => {
                 <div className="relative">
                     <motion.div
                         className={`relative bg-gray-900/80 backdrop-blur-lg rounded-2xl border transition-all duration-300 ${
-                        isFocused ? 'border-purple-500 shadow-lg shadow-purple-500/20' : 'border-gray-700'
+                        isFocused ? 'border-primary shadow-lg shadow-primary/90' : 'border-gray-700'
                         }`}
                         animate={{
                         boxShadow: isFocused 
-                            ? "0 0 30px rgba(168, 85, 247, 0.3)" 
-                            : "0 0 0px rgba(168, 85, 247, 0)"
+                            ? "0 0 20px rgba(48, 142, 237, 0.5)" 
+                            : "0 0 10px rgba(48, 142, 237, 0.2)"
                         }}
                     >
                         <div className="flex items-center px-6 py-4">
@@ -164,7 +164,7 @@ const Hero = () => {
                                 onChange={(e) => setPrompt(e.target.value)}
                                 onFocus={() => setIsFocused(true)}
                                 onBlur={() => setIsFocused(false)}
-                                placeholder="build a habit tracking app with streak visualization and social fea"
+                                placeholder="Build a habit tracking app with streak visualization."
                                 className="flex-1 bg-transparent text-white placeholder-gray-500 text-lg outline-none"
                             />
                             
@@ -178,7 +178,7 @@ const Hero = () => {
                                 </motion.button>
                                 
                                 <motion.div 
-                                    className="bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 rounded-xl text-white text-sm font-medium flex items-center gap-2 cursor-pointer"
+                                    className="bg-gradient-to-r from-primary to-primary/90 px-4 py-2 rounded-xl text-white text-sm font-medium flex items-center gap-2 cursor-pointer"
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={handleSubmit}
@@ -220,6 +220,23 @@ const Hero = () => {
                             whileTap={{ scale: 0.95 }}
                             animate={{
                                 y: [0, -5, 0],
+                            }}
+                            onClick={() => {
+                                const baseText = "Build a website in react with tailwind css and typescript.";
+                                const suggestionText = suggestion ? `Build a ${suggestion} website in react with tailwind css and typescript.` : baseText;
+
+                                setPrompt("");
+
+                                let currentIndex = 0;
+                                const interval = setInterval(() => {
+                                    if (currentIndex < suggestionText.length) {
+                                        setPrompt(suggestionText.slice(0, currentIndex + 1));
+                                        currentIndex++;
+                                    } else {
+                                        clearInterval(interval);
+                                    }
+                                }, 30);
+
                             }}
                             transition={{
                                 duration: 3,

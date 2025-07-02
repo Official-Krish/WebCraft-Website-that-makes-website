@@ -28,7 +28,7 @@ const Appbar = () => {
             whileHover={{ scale: 1.05 }}
             onClick={() => window.location.href = '/home'}
           >
-            <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-md flex items-center justify-center">
+            <div className="w-6 h-6 bg-gradient-to-r from-primary to-primary/90 rounded-md flex items-center justify-center">
               <span className="text-white font-bold text-xs">W</span>
             </div>
             <span className="text-white font-semibold">WebcraftAI</span>
@@ -67,7 +67,7 @@ const Appbar = () => {
           
           {/* Upgrade Button */}
           <motion.button
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-all"
+            className="group neon-glow bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-all"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
