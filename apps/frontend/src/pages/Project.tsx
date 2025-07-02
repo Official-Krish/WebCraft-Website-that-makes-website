@@ -44,17 +44,15 @@ export const Project = () => {
         alert("Worker URL, Session URL, or Preview URL is not available.");
         return;
       }
-      const worker = axios.post(`${workerUrl}/api/v1/AI/chat`, {
-        prompt: prompt,
-        projectId: projectId,
-      }, {
-        headers: {
-          Authorization: `${localStorage.getItem("token")}`,
-        },
-      })
-      if (!worker) {
-        alert("Worker is not available.");
-        return;
+      if(prompt){
+        axios.post(`${workerUrl}/api/v1/AI/chat`, {
+          prompt: prompt,
+          projectId: projectId,
+        }, {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        })  
       }
       setLoading(false);
     } catch (error) {

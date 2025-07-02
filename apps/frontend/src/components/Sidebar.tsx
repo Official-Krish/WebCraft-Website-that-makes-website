@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  FolderPlus, 
   Clock, 
   Calendar,
   Star,
@@ -15,8 +14,10 @@ import {
 import axios from 'axios';
 import { BACKEND_URL } from '../config';
 import { Project } from '../types';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar= () => {
+    const navigate = useNavigate();
     const [isHovered, setIsHovered] = useState(false);
     const [projects, setProjects] = useState<Project[]>([]);
 
@@ -93,16 +94,6 @@ const Sidebar= () => {
                         <span className="text-white font-semibold text-lg">same</span>
                     </motion.div>
 
-                    {/* New Project Button */}
-                    <motion.button
-                        className="w-full bg-gray-900 hover:bg-gray-800 text-white py-2 px-4 rounded-lg flex items-center gap-2 mb-6 transition-colors border border-gray-800"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                    >
-                        <FolderPlus size={16} />
-                        New Project
-                    </motion.button>
-
                     {/* Navigation Sections */}
                     <nav className="space-y-6 flex-1">
                         {/* Today */}
@@ -130,6 +121,7 @@ const Sidebar= () => {
                                                 'text-gray-400 hover:text-white hover:bg-gray-900'
                                             }`}
                                             whileHover={{ x: 4 }}
+                                            onClick={() => navigate(`/project/${project.id}`)}
                                         >
                                             {project.description}
                                         </motion.div>
@@ -159,6 +151,7 @@ const Sidebar= () => {
                                             key={index}
                                             className="text-sm text-gray-400 hover:text-white p-2 rounded cursor-pointer hover:bg-gray-900"
                                             whileHover={{ x: 4 }}
+                                            onClick={() => navigate(`/project/${project.id}`)}
                                         >
                                             {project.description}
                                         </motion.div>
@@ -179,6 +172,7 @@ const Sidebar= () => {
                                         key={index}
                                         className="text-sm text-gray-400 hover:text-white p-2 rounded cursor-pointer hover:bg-gray-900"
                                         whileHover={{ x: 4 }}
+                                        onClick={() => navigate(`/project/${project.id}`)}
                                     >
                                         {project.description}
                                     </motion.div>

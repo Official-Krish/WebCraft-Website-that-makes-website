@@ -172,7 +172,7 @@ export const ChatPanel = ({ projectId, workerUrl }: { projectId: string, workerU
                       className="space-y-4"
                     >
                       {/* User Message */}
-                      <div className="flex gap-3">
+                      <div className="flex gap-3 pt-2">
                         <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                           <User className="w-4 h-4 text-primary-foreground" />
                         </div>
