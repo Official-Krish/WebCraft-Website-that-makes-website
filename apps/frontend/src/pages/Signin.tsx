@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { BACKEND_URL } from '../config';
+import { BACKEND_URL, GOOGLE_AUTH_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -118,6 +118,7 @@ export const Signin = () => {
                             className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-gray-900 border border-gray-800 rounded-lg text-white hover:bg-gray-800 transition-colors"
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
+                            onClick={() => window.location.href = GOOGLE_AUTH_URL}
                         >
                             <Chrome size={18} />
                             Continue with Google

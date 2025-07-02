@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Chrome, Github, EyeOff, Eye } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BACKEND_URL } from '../config';
+import { BACKEND_URL, GOOGLE_AUTH_URL } from '../config';
 import { motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground';
 
@@ -61,6 +61,7 @@ export const Signup = () => {
                 className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-gray-900 border border-gray-800 rounded-lg text-white hover:bg-gray-800 transition-colors"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onClick={() => window.location.href = GOOGLE_AUTH_URL}
               >
                 <Chrome size={18} />
                 Continue with Google
