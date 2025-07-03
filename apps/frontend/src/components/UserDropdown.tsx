@@ -1,27 +1,15 @@
-
-import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Settings, LogOut, Crown } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { BACKEND_URL } from '../config';
+import { User as user} from '../types';
 
 interface UserProfileDropdownProps {
   isOpen: boolean;
   onClose: () => void;
-}
-
-interface user {
-    email: string;
-    password: string;
-    id: string;
-    name: string;
-    createdAt: Date;
-    updatedAt: Date;
+  user?: user;
 }
 
 
-const UserProfileDropdown = ({ isOpen, onClose }: UserProfileDropdownProps) => {
-    const [user, setUser] = useState<user>();
+const UserProfileDropdown = ({ isOpen, onClose, user }: UserProfileDropdownProps) => {
     const dropdownVariants = {
         hidden: { opacity: 0, scale: 0.95, y: -10 },
             visible: { 
@@ -46,23 +34,6 @@ const UserProfileDropdown = ({ isOpen, onClose }: UserProfileDropdownProps) => {
 
     const isLoggedIn = localStorage.getItem("token");
 
-    useEffect(() => {
-        const getUserDetails = async () => {
-            try {
-                const res = await axios.get(`${BACKEND_URL}/user/getDetails`, {
-                    headers: {
-                        Authorization: localStorage.getItem('token')
-                    }
-                })
-                setUser(res.data);
-            } catch (e) {
-                console.error("Error Fetching User Details", e)
-            }
-        }
-        isLoggedIn && getUserDetails();
-        
-    }, [])
-
     return (
         <AnimatePresence>
             {isOpen && (
@@ -74,7 +45,7 @@ const UserProfileDropdown = ({ isOpen, onClose }: UserProfileDropdownProps) => {
                     
                     {/* Dropdown */}
                     <motion.div
-                        className="absolute right-0 top-full mt-2 w-64 bg-[#1c1c1c] border border-gray-700 rounded-lg shadow-xl z-40"
+                        className="absolute right-0 top-full mt-2 w-64 bg-[#050505de] border border-gray-700 rounded-lg shadow-xl z-40"
                         variants={dropdownVariants}
                         initial="hidden"
                         animate="visible"
@@ -84,9 +55,11 @@ const UserProfileDropdown = ({ isOpen, onClose }: UserProfileDropdownProps) => {
                             <div className="p-4">
                                 {/* User Info */}
                                 <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-700">
-                                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                                        <User size={20} className="text-white" />
-                                    </div>
+                                    <img 
+                                        src={user?.ImageUrl || "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"} 
+                                        alt="User Avatar"
+                                        className="w-10 h-10 rounded-full object-cover"
+                                    />
                                     <div>
                                         <div className="text-white font-medium">{user?.name}</div>
                                         <div className="text-gray-400 text-sm">{user?.email}</div>

@@ -40,3 +40,13 @@ export interface Project {
   createdAt: Date 
   updatedAt: Date 
 }
+
+export interface User {
+  email: string;
+  password: string;
+  id: string;
+  name: string;
+  ImageUrl?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

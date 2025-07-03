@@ -3,13 +3,14 @@ import { motion } from 'framer-motion';
 import { 
   Clock, 
   Calendar,
-  Star,
   Settings,
   HelpCircle,
   MessageCircle,
   Crown,
   ChevronDown,
-  Menu
+  Menu,
+  ChevronUp,
+  Trash2
 } from 'lucide-react';
 import axios from 'axios';
 import { BACKEND_URL } from '../config';
@@ -20,6 +21,8 @@ const Sidebar= () => {
     const navigate = useNavigate();
     const [isHovered, setIsHovered] = useState(false);
     const [projects, setProjects] = useState<Project[]>([]);
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     const sidebarVariants = {
         collapsed: { 
@@ -61,6 +64,18 @@ const Sidebar= () => {
         getProjects();
     }, [])
 
+    const handleDeleteProject = async (projectId: string) => {
+        try {
+            await axios.delete(`${BACKEND_URL}/project/${projectId}`, {
+                headers: {
+                    Authorization: localStorage.getItem('token')
+                }
+            });
+            setProjects((prev) => prev.filter((project) => project.id !== projectId));
+        } catch (error) {
+            console.error("Error deleting project:", error);
+        }
+    };
 
     return (
         <>
@@ -72,7 +87,7 @@ const Sidebar= () => {
             
             {/* Sidebar */}
             <motion.div 
-                className="fixed left-0 top-0 h-full w-64 bg-black border-r border-gray-800 z-30 shadow-2xl"
+                className="fixed left-0 top-0 h-full w-64 bg-black border-r border-gray-800 z-30 shadow-2xl mt-16"
                 variants={sidebarVariants}
                 animate={isHovered ? "expanded" : "collapsed"}
                 onMouseEnter={() => setIsHovered(true)}
@@ -83,27 +98,25 @@ const Sidebar= () => {
                     variants={contentVariants}
                     animate={isHovered ? "expanded" : "collapsed"}
                 >
-                {/* Logo */}
-                    <motion.div 
-                        className="flex items-center gap-2 mb-8"
-                        whileHover={{ scale: 1.05 }}
-                    >
-                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">S</span>
-                        </div>
-                        <span className="text-white font-semibold text-lg">same</span>
-                    </motion.div>
-
                     {/* Navigation Sections */}
                     <nav className="space-y-6 flex-1">
                         {/* Today */}
                         <div>
                             <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
-                                <ChevronDown size={14} />
+                                <ChevronDown 
+                                    size={14} 
+                                    className={`transform cursor-pointer ${isCollapsed ? 'rotate-180' : ''}`}
+                                    onClick={() => setIsCollapsed(!isCollapsed)}
+                                />
                                 <Clock size={14} />
                                 Today
                             </div>
-                            <div className="ml-6 space-y-1">
+                            <motion.div
+                                className={`ml-6 space-y-1 ${isCollapsed ? 'hidden' : 'block'}`}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: isCollapsed ? 0 : 1 }}
+                                transition={{ duration: 0.2 }}
+                            >
                                 {projects
                                     .filter((project) => {
                                         const today = new Date();
@@ -117,27 +130,45 @@ const Sidebar= () => {
                                     .map((project, index) => (
                                         <motion.div
                                             key={index}
-                                            className={`text-sm p-2 rounded cursor-pointer ${
-                                                'text-gray-400 hover:text-white hover:bg-gray-900'
-                                            }`}
+                                            className="text-sm text-gray-400 hover:text-white p-2 rounded cursor-pointer hover:bg-gray-900"
                                             whileHover={{ x: 4 }}
-                                            onClick={() => navigate(`/project/${project.id}`)}
                                         >
-                                            {project.description}
+                                            <div className='flex items-center justify-between'>
+                                                <span onClick={() => navigate(`/project/${project.id}`)}>
+                                                    {project.description}
+                                                </span>
+                                                <Trash2 
+                                                    size={14} 
+                                                    className="inline ml-2 text-gray-400 cursor-pointer hover:text-red-500 transition-colors"
+                                                    onClick={() => {
+                                                        handleDeleteProject(project.id as string);
+                                                    }}
+                                                />
+                                            </div>
                                         </motion.div>
                                     ))
                                 }
-                            </div>
+                            </motion.div>
                         </div>
 
                         {/* Last 30 Days */}
                         <div>
                             <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
-                                <ChevronDown size={14} />
+                                <ChevronUp 
+                                    size={14} 
+                                    className={`transform cursor-pointer ${isOpen ? 'rotate-180' : ''}`} 
+                                    onClick={() => setIsOpen(!isOpen)}
+                                />
                                 <Calendar size={14} />
                                 Last 30 Days
                             </div>
-                            <div className="ml-6 space-y-1">
+
+                            <motion.div 
+                                className={`ml-6 space-y-1 ${isOpen ? 'block' : 'hidden'}`}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: isOpen ? 1 : 0 }}
+                                transition={{ duration: 0.2 }}
+                            >
                                 {projects
                                     .filter((project) => {
                                         const today = new Date();
@@ -151,33 +182,21 @@ const Sidebar= () => {
                                             key={index}
                                             className="text-sm text-gray-400 hover:text-white p-2 rounded cursor-pointer hover:bg-gray-900"
                                             whileHover={{ x: 4 }}
-                                            onClick={() => navigate(`/project/${project.id}`)}
                                         >
-                                            {project.description}
+                                            <div className='flex items-center justify-between'>
+                                                <span onClick={() => navigate(`/project/${project.id}`)}>
+                                                    {project.description}
+                                                </span>
+                                                <Trash2 
+                                                    size={14} 
+                                                    className="inline ml-2 text-gray-400 cursor-pointer hover:text-red-500 transition-colors"
+                                                    onClick={() => handleDeleteProject(project.id as string)}
+                                                />
+                                            </div>
                                         </motion.div>
                                     ))
                                 }
-                            </div>
-                        </div>
-
-                        {/* All Projects */}
-                        <div>
-                            <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
-                                <Star size={14} />
-                                All projects
-                            </div>
-                            <div className="ml-6 space-y-1">
-                                {projects.map((project, index) => (
-                                    <motion.div
-                                        key={index}
-                                        className="text-sm text-gray-400 hover:text-white p-2 rounded cursor-pointer hover:bg-gray-900"
-                                        whileHover={{ x: 4 }}
-                                        onClick={() => navigate(`/project/${project.id}`)}
-                                    >
-                                        {project.description}
-                                    </motion.div>
-                                ))}
-                            </div>
+                            </motion.div>
                         </div>
                     </nav>
 

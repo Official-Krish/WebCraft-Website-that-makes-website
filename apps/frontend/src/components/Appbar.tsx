@@ -1,10 +1,34 @@
 import { motion } from 'framer-motion';
-import { Crown, User } from 'lucide-react';
+import { Crown } from 'lucide-react';
 import UserProfileDropdown from './UserDropdown';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { BACKEND_URL } from '../config';
+import { User as user} from '../types';
 
 const Appbar = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [user, setUser] = useState<user>();
+
+  const isLoggedIn = localStorage.getItem("token");
+
+    useEffect(() => {
+        const getUserDetails = async () => {
+            try {
+                const res = await axios.get(`${BACKEND_URL}/user/getDetails`, {
+                    headers: {
+                        Authorization: localStorage.getItem('token')
+                    }
+                })
+                setUser(res.data);
+            } catch (e) {
+                console.error("Error Fetching User Details", e)
+            }
+        }
+        isLoggedIn && getUserDetails();
+        
+    }, [])
+
   const headerVariants = {
     hidden: { y: -50, opacity: 0 },
     visible: { 
@@ -50,8 +74,12 @@ const Appbar = () => {
             }}
           >
             {localStorage.getItem("token") ? <div className='flex items-center'>
-              <User size={20} className='mr-1'/>
-              My Account
+              <img 
+                src={user?.ImageUrl || "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"} 
+                alt="Profile" 
+                className="w-8 h-8 rounded-full mr-2"
+              />
+              <span className="text-white font-semibold">{user?.name || "User"}</span>
             </div> : 
               <div>
                 SignIn
@@ -63,6 +91,7 @@ const Appbar = () => {
           <UserProfileDropdown 
               isOpen={isProfileOpen} 
               onClose={() => setIsProfileOpen(false)} 
+              user={user}
           />
           
           {/* Upgrade Button */}
