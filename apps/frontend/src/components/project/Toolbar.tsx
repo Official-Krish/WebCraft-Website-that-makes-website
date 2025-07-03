@@ -49,7 +49,7 @@ export const Toolbar = ({ externalLinkUrl, setFullScreen, fullScreen }: ToolbarP
     }, [fullScreen, setFullScreen]);
 
     return (
-        <div className="bg-[#1a1a1a] px-4 py-2 flex items-center gap-3 justify-between">
+        <div className="bg-[#1a1a1a] px-4 py-2 flex items-center gap-3 justify-between rounded-md">
             {/* Refresh Button */}
             <button
                 onClick={handleRefresh}

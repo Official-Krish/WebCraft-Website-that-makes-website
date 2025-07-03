@@ -18,7 +18,7 @@ export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col h-full bg-black rounded-r-lg overflow-hidden shadow-glow w-full"
+      className="flex flex-col h-full bg-black rounded-r-lg overflow-hidden shadow-glow w-full pt-2"
     >
       <div className="px-4 py-1.5 flex items-center justify-between">
         <div className="flex items-center space-x-1 bg-black p-1 rounded-lg">
@@ -75,12 +75,12 @@ export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: {
               pointerEvents: viewMode === 'editor' ? 'auto' : 'none'
             }}
             transition={{ duration: 0.2 }}
-            className={`${viewMode === 'editor' ? 'h-full p-4' : 'width-0 overflow-hidden height-0'}`}
+            className={`${viewMode === 'editor' ? 'h-full px-4 py-2' : 'width-0 overflow-hidden height-0'}`}
           >
             <iframe 
               src={sessionUrl} 
               style={viewMode === 'editor' 
-                ? { minWidth: hidechat ? '100%' : '980px', height: '624px' } 
+                ? { minWidth: hidechat ? '100%' : '980px', height: hidechat ? '720px' : '660px' } 
                 : { width: '0', height: '0' }} 
             ></iframe>
           </motion.div>
@@ -92,7 +92,7 @@ export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: {
               pointerEvents: viewMode === 'preview' ? 'auto' : 'none'
             }}
             transition={{ duration: 0.2 }}
-            className={`${viewMode === 'preview' ? 'h-full flex flex-col' : 'width-0 overflow-hidden height-0'}`}
+            className={`${viewMode === 'preview' ? 'h-full flex flex-col ml-3' : 'width-0 overflow-hidden height-0'}`}
           >
             <Toolbar externalLinkUrl={previewUrl} setFullScreen={setFullScreen} fullScreen={fullScreen}/>
             <div className="min-h-0 flex items-center">
@@ -101,7 +101,7 @@ export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: {
                 className="shadow-xl rounded border"
                 style={viewMode === 'preview' ? { 
                   minWidth: hidechat ? '100%' : '994px',
-                  height: '624px',
+                  height: hidechat? '690px' : '614px',
                   maxWidth: '100%',
                   maxHeight: '100%'
                 } : { width: '0', height: '0' }}

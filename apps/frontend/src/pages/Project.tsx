@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom"
 import axios from "axios"
 import { K8S_ORCHASTRATOR_URL } from "../config"
 import { useParams, useSearchParams } from 'react-router-dom';
+import AppBar from "../components/project/Appbar"
 
 
 export const Project = () => {
@@ -66,9 +67,10 @@ export const Project = () => {
   },[]);
 
   return (
-      <div className="mt-10">
+      <div>
           <GridBackground>
-              <div className="px-4 py-3">
+              <div>
+                {!hideChat && <AppBar title={prompt || "WebcraftAI Project"} /> }
                 {Loading && <div className="flex items-center justify-center h-full">
                   <div className="animate-spin rounded-full border-t-2 border-b-2 border-primary/50 h-24 w-24 border-solid"></div>
                 </div>}

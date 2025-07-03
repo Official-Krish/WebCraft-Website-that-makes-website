@@ -17,7 +17,7 @@ export const ProjectLayout: React.FC<ProjectLayoutProps> = ({
   return (
     <div 
       ref={containerRef}
-      className="flex relative mt-5"
+      className="flex relative"
     >
       {/* Left Panel */}
       <AnimatePresence>

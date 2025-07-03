@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Bot, Code, Loader2, MessageSquare, SendHorizontal, Sparkles, User } from 'lucide-react';
+import { Bot, Code, Loader2, MessageSquare, SendHorizontal, User } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import axios from 'axios';
 
@@ -97,13 +96,6 @@ export const ChatPanel = ({ projectId, workerUrl }: { projectId: string, workerU
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit();
-    }
-  };
-
   const getStatusIcon = (status?: string) => {
     switch (status) {
       case 'pending':
@@ -119,22 +111,6 @@ export const ChatPanel = ({ projectId, workerUrl }: { projectId: string, workerU
 
   return (
     <div className="flex flex-col h-full bg-background border-r border-border border-b">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border bg-muted/30">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-primary" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-sm">WebcraftAI</h3>
-            <p className="text-xs text-muted-foreground">Building your website</p>
-          </div>
-        </div>
-        <Badge variant="secondary" className="text-xs">
-          {prompts.filter(p => p.type === "USER").length} messages
-        </Badge>
-      </div>
-
       {/* Messages Area */}
       <div className="flex-1 relative overflow-y-scroll">
         {prompts.length === 0 ? (
@@ -263,24 +239,31 @@ export const ChatPanel = ({ projectId, workerUrl }: { projectId: string, workerU
         <form onSubmit={handleSubmit} className="p-4">
           <div className="flex items-end gap-3">
             <div className="flex-1 relative">
-              <Input
-                ref={inputRef}
+              <textarea
+                ref={inputRef as unknown as React.RefObject<HTMLTextAreaElement>}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyUpCapture={handleKeyPress}
+                onChange={(e) => {
+                  setInput(e.target.value);
+                  if (inputRef.current) {
+                    inputRef.current.style.height = 'auto'; 
+                    inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit();
+                  }
+                }}
                 placeholder="Describe what you want to build..."
+                rows={1}
                 className={cn(
-                  "min-h-[44px] resize-none pr-12 bg-muted/50",
-                  "focus-visible:ring-2 focus-visible:ring-primary/20",
-                  "border-border/50 focus-visible:border-primary/50"
+                  "min-h-[44px] max-h-60 w-full resize-none pr-12 bg-muted/50",
+                  "border border-border/50",
+                  "rounded-md px-3 py-2 text-sm font-normal leading-relaxed text-foreground"
                 )}
                 disabled={isLoading}
               />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-                  <span className="text-xs">⏎</span>
-                </kbd>
-              </div>
             </div>
             <Button 
               type="submit" 
