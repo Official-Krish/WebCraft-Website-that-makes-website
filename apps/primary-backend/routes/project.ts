@@ -63,4 +63,33 @@ projectRouter.get("/:projectId", authMiddleware, async (req, res) => {
     }
 });
 
+projectRouter.delete("/:projectId", authMiddleware, async (req, res) => {
+    const projectId = req.params.projectId;
+    if (!projectId) {
+        res.status(400).json({ error: "Project ID is required" });
+        return;
+    }
+    try {
+        await prisma.project.delete({
+            where: {
+                id: projectId
+            }
+        });
+        await prisma.prompt.deleteMany({
+            where: {
+                projectId: projectId
+            }
+        });
+        await prisma.action.deleteMany({
+            where: {
+                projectId: projectId
+            }
+        });
+        res.status(200).json({ message: "Project deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting project:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 export default projectRouter;

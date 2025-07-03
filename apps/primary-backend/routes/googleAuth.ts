@@ -45,6 +45,7 @@ passport.use(new GoogleStrategy({
                 name: profile.displayName || '',
                 email: profile.emails[0].value,
                 password: await bcrypt.hash(accessToken, 10),
+                ImageUrl: profile.photos && profile.photos.length > 0 ? profile.photos[0].value : null,
             }
         });
     }
