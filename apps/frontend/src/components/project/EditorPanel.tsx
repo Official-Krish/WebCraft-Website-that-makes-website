@@ -4,10 +4,11 @@ import { Code, MonitorSmartphone } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';
 import { Toolbar } from './Toolbar';
+import { TbLayoutSidebar, TbLayoutSidebarFilled } from "react-icons/tb";
 
 type ViewMode = 'editor' | 'preview';
 
-export const EditorPanel = ({ sessionUrl, previewUrl }: { sessionUrl: string, previewUrl: string }) => {
+export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: { sessionUrl: string, previewUrl: string, hidechat: boolean, setHideChat: (arg0: boolean) => void }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('editor');
   const [fullScreen, setFullScreen] = useState(false);
 
@@ -16,10 +17,22 @@ export const EditorPanel = ({ sessionUrl, previewUrl }: { sessionUrl: string, pr
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col h-full bg-black rounded-r-lg overflow-hidden shadow-glow fixed"
+      className="flex flex-col h-full bg-black rounded-r-lg overflow-hidden shadow-glow w-full"
     >
       <div className="px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-1 bg-black p-1 rounded-lg">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => setHideChat(!hidechat)}
+            className={cn(
+              "relative px-2 py-1 transition-all duration-200 hover:bg-[#2f2f2f]",
+            )}
+          > 
+            {!hidechat && <TbLayoutSidebarFilled />}
+            {hidechat && <TbLayoutSidebar />}
+          </Button>
+
           <Button 
             variant="ghost" 
             size="sm"
@@ -61,7 +74,14 @@ export const EditorPanel = ({ sessionUrl, previewUrl }: { sessionUrl: string, pr
               transition={{ duration: 0.2 }}
               className="h-full p-4"
             >
-              <iframe src={sessionUrl} style={{ width: '980px', height: '624px' }}></iframe>
+              <iframe 
+                src={sessionUrl} 
+                className="w-full h-full border-0 rounded"
+                style={{ 
+                  minWidth: hidechat ? '100%' : '980px',
+                  minHeight: '624px'
+                }}
+              />
             </motion.div>
           ) : (
             <motion.div
@@ -73,13 +93,13 @@ export const EditorPanel = ({ sessionUrl, previewUrl }: { sessionUrl: string, pr
               className="h-full flex flex-col"
             >
               <Toolbar externalLinkUrl={previewUrl} setFullScreen={setFullScreen} fullScreen={fullScreen}/>
-              <div className="min-h-0 flex items-center">
+              <div className="min-h-0 flex items-center justify-center p-4">
                 <iframe
                   src={previewUrl}
-                  className="shadow-xl rounded border"
+                  className="shadow-xl rounded border w-full h-full"
                   style={{ 
-                    width: '994px', 
-                    height: '624px',
+                    minWidth: hidechat ? '100%' : '994px',
+                    minHeight: '624px',
                     maxWidth: '100%',
                     maxHeight: '100%'
                   }}
