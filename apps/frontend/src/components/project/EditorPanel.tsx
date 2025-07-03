@@ -6,6 +6,7 @@ import { Button } from '../ui/button';
 import { Toolbar } from './Toolbar';
 import { TbLayoutSidebar, TbLayoutSidebarFilled } from "react-icons/tb";
 
+
 type ViewMode = 'editor' | 'preview';
 
 export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: { sessionUrl: string, previewUrl: string, hidechat: boolean, setHideChat: (arg0: boolean) => void }) => {
@@ -19,7 +20,7 @@ export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: {
       transition={{ duration: 0.3 }}
       className="flex flex-col h-full bg-black rounded-r-lg overflow-hidden shadow-glow w-full"
     >
-      <div className="px-4 py-3 flex items-center justify-between">
+      <div className="px-4 py-1.5 flex items-center justify-between">
         <div className="flex items-center space-x-1 bg-black p-1 rounded-lg">
           <Button 
             variant="ghost" 
@@ -31,6 +32,7 @@ export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: {
           > 
             {!hidechat && <TbLayoutSidebarFilled />}
             {hidechat && <TbLayoutSidebar />}
+            
           </Button>
 
           <Button 
@@ -63,50 +65,49 @@ export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: {
         </div>
       </div>
       
-      <div className="flex-1 min-h-0">
+      <div className="min-h-0">
         <AnimatePresence mode="wait">
-          {viewMode === 'editor' ? (
-            <motion.div
-              key="editor"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2 }}
-              className="h-full p-4"
-            >
-              <iframe 
-                src={sessionUrl} 
-                className="w-full h-full border-0 rounded"
-                style={{ 
-                  minWidth: hidechat ? '100%' : '980px',
-                  minHeight: '624px'
-                }}
+          <motion.div
+            key="editor"
+            animate={{ 
+              opacity: viewMode === 'editor' ? 1 : 0,
+              x: viewMode === 'editor' ? 0 : -20,
+              pointerEvents: viewMode === 'editor' ? 'auto' : 'none'
+            }}
+            transition={{ duration: 0.2 }}
+            className={`${viewMode === 'editor' ? 'h-full p-4' : 'width-0 overflow-hidden height-0'}`}
+          >
+            <iframe 
+              src={sessionUrl} 
+              style={viewMode === 'editor' 
+                ? { minWidth: hidechat ? '100%' : '980px', height: '624px' } 
+                : { width: '0', height: '0' }} 
+            ></iframe>
+          </motion.div>
+          <motion.div
+            key="preview"
+            animate={{ 
+              opacity: viewMode === 'preview' ? 1 : 0,
+              x: viewMode === 'preview' ? 0 : 20,
+              pointerEvents: viewMode === 'preview' ? 'auto' : 'none'
+            }}
+            transition={{ duration: 0.2 }}
+            className={`${viewMode === 'preview' ? 'h-full flex flex-col' : 'width-0 overflow-hidden height-0'}`}
+          >
+            <Toolbar externalLinkUrl={previewUrl} setFullScreen={setFullScreen} fullScreen={fullScreen}/>
+            <div className="min-h-0 flex items-center">
+              <iframe
+                src={previewUrl}
+                className="shadow-xl rounded border"
+                style={viewMode === 'preview' ? { 
+                  minWidth: hidechat ? '100%' : '994px',
+                  height: '624px',
+                  maxWidth: '100%',
+                  maxHeight: '100%'
+                } : { width: '0', height: '0' }}
               />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="preview"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2 }}
-              className="h-full flex flex-col"
-            >
-              <Toolbar externalLinkUrl={previewUrl} setFullScreen={setFullScreen} fullScreen={fullScreen}/>
-              <div className="min-h-0 flex items-center justify-center p-4">
-                <iframe
-                  src={previewUrl}
-                  className="shadow-xl rounded border w-full h-full"
-                  style={{ 
-                    minWidth: hidechat ? '100%' : '994px',
-                    minHeight: '624px',
-                    maxWidth: '100%',
-                    maxHeight: '100%'
-                  }}
-                />
-              </div>
-            </motion.div>
-          )}
+            </div>
+          </motion.div>
         </AnimatePresence>
         
         {/* Fullscreen Overlay */}
@@ -117,7 +118,7 @@ export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="fixed inset-0 z-50 bg-black bg-opacity-95 flex flex-col mt-5"
+              className="fixed inset-0 z-50 bg-black bg-opacity-95 flex flex-col mt-4"
               style={{ top: '48px' }}
             >
               {/* Animated backdrop */}

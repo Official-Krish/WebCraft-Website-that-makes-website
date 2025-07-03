@@ -26,35 +26,35 @@ export const Project = () => {
 
   async function GetURLs() {
     try {
-      // if (!projectId) {
-      //   alert("Project ID is not provided.");
-      //   return;
-      // }
-      // setLoading(true);
-      // const res = await axios.get(`${K8S_ORCHASTRATOR_URL}/worker/${projectId}`, {
-      //   headers: {
-      //     Authorization: `${localStorage.getItem("token")}`,
-      //   },
-      // }) 
-      // const { sessionUrl, previewUrl, workerUrl } = res.data;
-      // setSessionUrl(sessionUrl);
-      // setPreviewUrl(previewUrl);
-      // setWorkerUrl(workerUrl);
+      if (!projectId) {
+        alert("Project ID is not provided.");
+        return;
+      }
+      setLoading(true);
+      const res = await axios.get(`${K8S_ORCHASTRATOR_URL}/worker/${projectId}`, {
+        headers: {
+          Authorization: `${localStorage.getItem("token")}`,
+        },
+      }) 
+      const { sessionUrl, previewUrl, workerUrl } = res.data;
+      setSessionUrl(sessionUrl);
+      setPreviewUrl(previewUrl);
+      setWorkerUrl(workerUrl);
 
-      // if(!workerUrl || !sessionUrl || !previewUrl) {
-      //   alert("Worker URL, Session URL, or Preview URL is not available.");
-      //   return;
-      // }
-      // if(prompt){
-      //   axios.post(`${workerUrl}/api/v1/AI/chat`, {
-      //     prompt: prompt,
-      //     projectId: projectId,
-      //   }, {
-      //     headers: {
-      //       Authorization: `${localStorage.getItem("token")}`,
-      //     },
-      //   })  
-      // }
+      if(!workerUrl || !sessionUrl || !previewUrl) {
+        alert("Worker URL, Session URL, or Preview URL is not available.");
+        return;
+      }
+      if(prompt){
+        axios.post(`${workerUrl}/api/v1/AI/chat`, {
+          prompt: prompt,
+          projectId: projectId,
+        }, {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        })  
+      }
       setLoading(false);
     } catch (error) {
       console.error("Error fetching iframe URL:", error);
