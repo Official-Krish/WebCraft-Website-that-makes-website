@@ -4,6 +4,7 @@ import { Signin } from "./pages/Signin"
 import { Signup } from "./pages/Signup"
 import { Project } from "./pages/Project"
 import { Prompt } from "./pages/Prompt"
+import AuthPage from "./pages/AuthPage"
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/project/:projectId" element={<Project />} />
+          <Route path="/auth/callback" element={<AuthPage />} />
         </Routes>
       </BrowserRouter>
     </>
