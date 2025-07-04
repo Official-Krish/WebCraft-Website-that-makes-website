@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 import prisma from "@repo/db/client";
 
 const BASE_WORKER_DIR = "/tmp/react-app";
@@ -28,13 +30,8 @@ export async function onFileUpdate(filePath: string, fileContent: string, projec
 }
 
 export async function onShellCommand(shellCommand: string, projectId: string, promptId: string) {
-    //npm run build && npm run start
     const commands = shellCommand.split("&&");
     for (const command of commands) {
-        console.log(`Running command: ${command}`);
-        console.log(BASE_WORKER_DIR);
-        // const result = Bun.spawnSync({cmd: command.split(" "), cwd: BASE_WORKER_DIR});
-
         ws.send(JSON.stringify({
             event: "admin",
             data: {
@@ -50,6 +47,17 @@ export async function onShellCommand(shellCommand: string, projectId: string, pr
             }
         })
     }
+}
+
+export async function onDescription(description: string, projectId: string, promptId: string) {
+    await prisma.action.create({
+        data: {
+            content: description,
+            projectId,
+            promptId,
+        }
+    })
+
 }
 
 export function onPromptStart() {

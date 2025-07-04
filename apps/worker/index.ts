@@ -1,18 +1,18 @@
 require('dotenv').config();
 import express from 'express';
 import cors from 'cors';
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getSystemPrompt } from './utils/Prompt';
 import { ArtifactProcessor } from './utils/parser';
-import { onFileUpdate, onPromptEnd, onPromptStart, onShellCommand } from './utils/os';
+import { onDescription, onFileUpdate, onPromptEnd, onPromptStart, onShellCommand } from './utils/os';
 import { authMiddleware } from './middleware';
 import prisma from "@repo/db/client";
+import OpenAI from "openai";
 
 const app = express();
 app.use(express.json());
 
 app.use(cors({
-    origin: ["https://webcraft.krishdev.xyz"],
+    origin: ["https://webcraft.krishdev.xyz", "http://localhost:5174"],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -22,15 +22,11 @@ app.set('trust proxy', 1);
 
 app.options('*', cors());
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "");
-const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
-    generationConfig: {
-        maxOutputTokens: 8000,
-        temperature: 0.7,
-    }, 
-    systemInstruction: getSystemPrompt() 
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY || "",
+    baseURL: process.env.OPENAI_API_BASE_URL || "",
 });
+
 
 app.post("/api/v1/AI/chat", authMiddleware, async (req, res) => {
     try {
@@ -41,7 +37,7 @@ app.post("/api/v1/AI/chat", authMiddleware, async (req, res) => {
             userPrompt = JSON.stringify(userPrompt, null, 2);
         }
 
-        const project = await prisma.project.findUnique({
+        const project = await prisma.project.findFirst({
             where: {
                 id: projectId,
             },
@@ -73,20 +69,32 @@ app.post("/api/v1/AI/chat", authMiddleware, async (req, res) => {
             },
         });
 
-        // Generate content
-        const response = await model.generateContentStream(
-            allPrompts.map((prompt) => prompt.content).join("\n"),
-        );
+        let responseText = "";
 
-        let artifactProcessor = new ArtifactProcessor("", (filePath, fileContent) => onFileUpdate(filePath, fileContent, projectId, promptDb.id), (shellCommand) => onShellCommand(shellCommand, projectId, promptDb.id));
+        const stream = await openai.chat.completions.create({
+            model: "shivaay",
+            messages: [
+                { role: "system", content: getSystemPrompt() },
+                {role: "system", content: "If user doesnt specify file format in which they wants code, then always return code in typescript format (tsx or ts), for example: build a todo website, then give the code in typescript not in javascript. If user explicitly asks for javascript, then only return code in javascript format (js or jsx)."},
+                { role: "user", content: allPrompts.map(p => p.content).join("\n") + `\n\n${prompt}` },
+            ],
+            stream: true,
+            max_tokens: 10000,
+        });
+
+        let artifactProcessor = new ArtifactProcessor(
+            "", 
+            (filePath, fileContent) => onFileUpdate(filePath, fileContent, projectId, promptDb.id), 
+            (shellCommand) => onShellCommand(shellCommand, projectId, promptDb.id),
+            (description) => onDescription(description, projectId, promptDb.id),
+        )
 
         onPromptStart();
-        let responseText = "";
-        for await (const chunk of response.stream) {
-            const chunkText = chunk.text;
-            responseText += chunkText();
-            console.log(chunkText());
-            artifactProcessor.append(chunkText());
+        for await (const chunk of stream) {
+            const data = chunk.choices[0].delta.content;
+            if (!data) continue; 
+            responseText += data;
+            artifactProcessor.append(data);
             artifactProcessor.parse();
         }
         onPromptEnd();
