@@ -2,7 +2,7 @@ FROM codercom/code-server:4.96.4
 
 USER root
 RUN apt-get update \
-    && apt-get install -y curl \
+    && apt-get install -y curl wget \
     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && apt-get clean \
@@ -16,24 +16,34 @@ WORKDIR /tmp/react-app
 RUN npm install
 
 # Create Vite config for container environment
-RUN echo 'import { defineConfig } from "vite" \n import react from "@vitejs/plugin-react" \n import tailwindcss from "@tailwindcss/vite" \n\nexport default defineConfig \n ({\n  plugins: [react(), tailwindcss()], \n server: {\n   host: "0.0.0.0",\n   port: 5173,\n   strictPort: true, \n allowedHosts: [".krishdev.xyz"] \n }\n})' > vite.config.ts
+RUN echo 'import { defineConfig } from "vite"\nimport react from "@vitejs/plugin-react"\nimport tailwindcss from "@tailwindcss/vite"\n\nexport default defineConfig({\n  plugins: [react(), tailwindcss()],\n  server: {\n    host: "0.0.0.0",\n    port: 5173,\n    strictPort: true,\n    allowedHosts: [".krishdev.xyz"]\n  }\n})' > vite.config.ts
 
 # Also modify package.json to ensure dev script uses correct host
 RUN npm pkg set scripts.dev="vite --host 0.0.0.0 --port 5173"
 
-# Download and install the VS Code extension
-RUN wget https://github.com/Official-Krish/WebCraft-Extension/raw/refs/heads/main/webcraft-listener-0.0.1.vsix
-RUN code-server --install-extension /tmp/react-app/webcraft-listener-0.0.1.vsix
+# Create necessary directories for code-server
+RUN mkdir -p /home/coder/.local/share/code-server/extensions
 
-# Set proper ownership
+# Download the VS Code extension to a proper location
+RUN wget -O /tmp/webcraft-listener-0.0.1.vsix https://github.com/Official-Krish/WebCraft-Extension/raw/refs/heads/main/webcraft-listener-0.0.1.vsix
+
+# Set proper ownership before switching users
 RUN chown -R coder:coder /tmp/react-app
+RUN chown -R coder:coder /home/coder/.local/share/code-server
+RUN chown coder:coder /tmp/webcraft-listener-0.0.1.vsix
 
-# Revert to the code-server default user  
 USER coder
 
-# Configure VS Code settings
+# Install the extension as the coder user
+RUN code-server --install-extension /tmp/webcraft-listener-0.0.1.vsix
+
+# Install One Dark Pro theme extension
+RUN code-server --install-extension zhuangtongfa.Material-theme
+
+# Configure VS Code settings with One Dark Pro theme
 RUN mkdir -p /home/coder/.local/share/code-server/User
-RUN echo '{"workbench.colorTheme": "Dark+", "workbench.preferredDarkColorTheme": "Dark+"}' > /home/coder/.local/share/code-server/User/settings.json
+
+RUN echo '{\n  "workbench.colorTheme": "One Dark Pro",\n  "workbench.preferredDarkColorTheme": "One Dark Pro",\n  "window.autoDetectColorScheme": false,\n  "workbench.colorCustomizations": {},\n  "editor.theme": "One Dark Pro"\n}' > /home/coder/.local/share/code-server/User/settings.json
 
 # Expose code-server's default ports
 EXPOSE 8080

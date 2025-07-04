@@ -4,10 +4,11 @@ FROM node:23-slim
 RUN apt-get update -y && apt-get install -y openssl
 
 RUN npm install -g pnpm
+RUN npm install -g bun
 
 WORKDIR /app
 
-COPY ./apps/backend/ ./apps/primary-backend
+COPY ./apps/primary-backend/ ./apps/primary-backend
 COPY ./packages/ ./packages
 COPY package.json .
 COPY turbo.json .
