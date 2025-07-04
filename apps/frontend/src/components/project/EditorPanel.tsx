@@ -98,7 +98,7 @@ export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: {
             <div className="min-h-0 flex items-center">
               <iframe
                 src={previewUrl}
-                className="shadow-xl rounded border"
+                className="shadow-xl rounded"
                 style={viewMode === 'preview' ? { 
                   minWidth: hidechat ? '100%' : '994px',
                   height: hidechat? '690px' : '614px',
@@ -118,7 +118,7 @@ export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="fixed inset-0 z-50 bg-black bg-opacity-95 flex flex-col mt-4"
+              className="fixed inset-0 z-50 bg-black bg-opacity-95 flex flex-col mt-1"
               style={{ top: '48px' }}
             >
               {/* Animated backdrop */}
@@ -142,7 +142,7 @@ export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: {
               </motion.div>
 
               <motion.div 
-                className="relative z-40 flex-1 flex items-center justify-center p-4"
+                className="relative z-40 flex-1 flex items-center justify-center"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
@@ -150,9 +150,9 @@ export const EditorPanel = ({ sessionUrl, previewUrl, setHideChat, hidechat }: {
               >
                 <iframe
                   src={previewUrl}
-                  className="shadow-2xl rounded-lg border border-gray-600"
+                  className="shadow-2xl rounded-lg"
                   style={{ 
-                    width: '95vw', 
+                    width: 'calc(100vw - 32px)', 
                     height: 'calc(85vh - 48px)',
                     maxWidth: '1920px',
                     maxHeight: '1080px'

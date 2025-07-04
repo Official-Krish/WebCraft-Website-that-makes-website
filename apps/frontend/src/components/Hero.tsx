@@ -43,8 +43,7 @@ const Hero = () => {
 
     const floatingElements = Array.from({ length: 6 }, (_, i) => i);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         if(!localStorage.getItem("token")){
             navigate('/signin');
             return;
@@ -66,6 +65,17 @@ const Hero = () => {
         }
         else {
             alert("Error creating project");
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        console.log(e.key);
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSubmit();
+        }
+        if (e.key === 'Escape') {
+            setPrompt('');
         }
     };
 
@@ -164,6 +174,7 @@ const Hero = () => {
                                 onChange={(e) => setPrompt(e.target.value)}
                                 onFocus={() => setIsFocused(true)}
                                 onBlur={() => setIsFocused(false)}
+                                onKeyDown={handleKeyDown}
                                 placeholder="Build a habit tracking app with streak visualization."
                                 className="flex-1 bg-transparent text-white placeholder-gray-500 text-lg outline-none"
                             />
