@@ -1,10 +1,4 @@
-FROM node:23-slim
-
-# Install required system dependencies including OpenSSL
-RUN apt-get update -y && apt-get install -y openssl
-
-RUN npm install -g pnpm
-RUN npm install -g bun
+FROM oven/bun:latest
 
 WORKDIR /app
 
@@ -12,12 +6,11 @@ COPY ./apps/primary-backend/ ./apps/primary-backend
 COPY ./packages/ ./packages
 COPY package.json .
 COPY turbo.json .
-COPY pnpm-lock.yaml .
-COPY pnpm-workspace.yaml .
+COPY bun.lock .
 
-RUN pnpm install
-RUN pnpm run db:generate
+RUN bun install
+RUN bun run db:generate
 
 EXPOSE 3000
 
-CMD ["pnpm", "run", "primary-backend"]
+CMD ["bun", "run", "primary-backend"]
