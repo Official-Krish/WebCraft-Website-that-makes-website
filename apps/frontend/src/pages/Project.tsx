@@ -8,6 +8,7 @@ import axios from "axios"
 import { K8S_ORCHASTRATOR_URL } from "../config"
 import { useParams, useSearchParams } from 'react-router-dom';
 import AppBar from "../components/project/Appbar"
+import { toast } from "react-toastify"
 
 
 export const Project = () => {
@@ -58,7 +59,22 @@ export const Project = () => {
       }
       setLoading(false);
     } catch (error) {
+      toast.error("Failed to fetch URLs. Please try again later.", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      setLoading(false);
+      setWorkerUrl(null);
+      setSessionUrl(null);
+      setPreviewUrl(null);
       console.error("Error fetching iframe URL:", error);
+      window.location.href = "/";
     }
   }
 

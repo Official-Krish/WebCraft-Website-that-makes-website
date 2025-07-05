@@ -4,10 +4,12 @@ import App from './App.tsx'
 import { RecoilRoot } from 'recoil'
 import Appbar from './components/Appbar.tsx'
 import Footer from './components/Footer.tsx'
+import { ToastContainer } from 'react-toastify'
 
 createRoot(document.getElementById('root')!).render(
   <>
     <RecoilRoot>
+      <ToastContainer/>
       {(window.location.pathname === '/prompt' || window.location.pathname === '/signin' || window.location.pathname === '/signup' || window.location.pathname === '/home' ) && (
         <Appbar />
       )}

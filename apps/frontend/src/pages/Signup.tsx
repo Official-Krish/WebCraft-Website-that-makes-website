@@ -5,6 +5,7 @@ import axios from 'axios';
 import { BACKEND_URL, GOOGLE_AUTH_URL } from '../config';
 import { motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground';
+import { toast } from 'react-toastify';
 
 export const Signup = () => {
     const [email, setEmail] = useState('');
@@ -30,9 +31,29 @@ export const Signup = () => {
         if(response.status === 200){
           localStorage.setItem("token", `Bearer ${response.data.token}`);
           localStorage.setItem("name", name);
+          toast.success('Account created successfully!', {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
           navigate('/');
         }
       } catch (error) {
+      toast.error('Signup failed. Please try again.', {
+        position: "bottom-right",
+        autoClose: 5000,        
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
         console.log(error);
       }
       setIsLoading(false);

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, Chrome, Github } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 export const Signin = () => {
     const [email, setEmail] = useState('');
@@ -27,9 +28,29 @@ export const Signin = () => {
             if (reponse.status === 200) {
                 localStorage.setItem("token", `Bearer ${reponse.data.token}`);
                 localStorage.setItem("name", reponse.data.name);
+                toast.success('Logged in Successfully!', {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
                 navigate ('/');
             }
         } catch (error) {
+            toast.error('Login failed. Please check your credentials.', {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
             console.log(error);
         }
         setIsLoading(false);
