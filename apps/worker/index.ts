@@ -76,7 +76,7 @@ app.post("/api/v1/AI/chat", authMiddleware, async (req, res) => {
             messages: [
                 { role: "system", content: getSystemPrompt() },
                 {role: "system", content: "If user doesnt specify file format in which they wants code, then always return code in typescript format (tsx or ts), for example: build a todo website, then give the code in typescript not in javascript. If user explicitly asks for javascript, then only return code in javascript format (js or jsx)."},
-                { role: "user", content: allPrompts.map(p => p.content).join("\n") + `\n\n${prompt}` },
+                { role: "user", content: allPrompts.map((p: any) => p.content).join("\n") + `\n\n${prompt}` },
             ],
             stream: true,
             max_tokens: 10000,

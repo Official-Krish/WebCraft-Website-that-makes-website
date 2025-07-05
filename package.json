@@ -9,8 +9,8 @@
     "worker": "cd ./apps/worker && bun index.ts",
     "k8s-orchastrator": "cd ./apps/k8s-orchastrator && bun index.ts",
     "primary-backend": "cd ./apps/primary-backend && bun index.ts",
-    "db:generate": "cd ./packages/db && pnpm install && pnpm dlx prisma generate && cd ../..",
-    "db:migrate": "cd ./packages/db && pnpm dlx prisma migrate dev && cd ../.."
+    "db:generate": "cd ./packages/db && bunx prisma generate && cd ../..",
+    "db:migrate": "cd ./packages/db && bunx prisma migrate dev && cd ../.."
   },
   "devDependencies": {
     "prettier": "^3.4.2",
@@ -21,8 +21,12 @@
     "apps/*",
     "packages/*"
   ],
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "bun@1.0.0",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^1.1.2",
+    "prisma": "^6.11.1"
   }
 }

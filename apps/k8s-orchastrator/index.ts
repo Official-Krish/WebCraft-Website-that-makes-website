@@ -1,7 +1,7 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 import express from 'express';
 import cors from 'cors';
-import prisma from "@repo/db/client"
+import prisma from "@repo/db/client";
 import { KubeConfig } from "@kubernetes/client-node";
 import * as k8s from "@kubernetes/client-node";
 import { Writable } from 'stream';
@@ -152,7 +152,7 @@ async function createPod(name: string) {
                 }],
             }, {
                 name: "worker",
-                image: "krishanand01/webcraft-worker:v2",
+                image: "krishanand01/webcraft-worker:v2.1",
                 ports: [{
                     containerPort: 4000
                 }],
@@ -160,14 +160,22 @@ async function createPod(name: string) {
                     name: "WS_RELAYER_URL",
                     value: "ws://localhost:9093"
                 }, {
-                    name: "GEMINI_API_KEY",
+                    name: "OPENAI_API_KEY",
                     valueFrom: {
                         secretKeyRef: {
                             name: "worker-secret",
-                            key: "GEMINI_API_KEY"
+                            key: "OPENAI_API_KEY"
                         }
                     }
-                }, {
+                },{
+                    name: "OPENAI_API_BASE_URL",
+                    valueFrom: {
+                        secretKeyRef: {
+                            name: "worker-secret",
+                            key: "OPENAI_API_BASE_URL"
+                        }
+                    }
+                },{
                     name: "DATABASE_URL",
                     valueFrom: {
                         secretKeyRef: {

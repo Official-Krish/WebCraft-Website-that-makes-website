@@ -7,8 +7,10 @@ import cors from "cors";
 const app = express();
 app.use(express.json());
 app.use(cors({
+    origin: ["https://webcraft.krishdev.xyz", "http://localhost:5173"],
     credentials: true,
-    origin: "https://webcraft.krishdev.xyz"
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 const projectId = process.env.PROJECT_ID;

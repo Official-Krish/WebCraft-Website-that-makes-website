@@ -19,6 +19,8 @@ GoogleRouter.use(session({
     saveUninitialized: true,
 }));
 
+const websiteUrl = process.env.WEBCRAFT_ORIGIN || "http://localhost:5174";
+
 // Configure Google OAuth Strategy
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID || "",
@@ -91,9 +93,9 @@ GoogleRouter.get('/callback',
         name: (req.user as any).name 
       }, process.env.JWT_SECRET!, { expiresIn: '3h' });
 
-      res.redirect(`http://localhost:5173/auth/callback?token=${token}`);
+      res.redirect(`${websiteUrl}/auth/callback?token=${token}`);
     } else {
-      res.redirect('http://localhost:5173/auth/failure');
+      res.redirect(`${websiteUrl}/auth/failure`);
     }
   }
 );
