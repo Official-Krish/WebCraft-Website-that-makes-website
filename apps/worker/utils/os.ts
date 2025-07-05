@@ -17,6 +17,7 @@ export async function onFileUpdate(filePath: string, fileContent: string, projec
             content: `Updated file ${filePath}`,
             projectId: projectId,
             promptId: promptId,
+            type: "FILE"
         }
     })
     ws.send(JSON.stringify({
@@ -44,6 +45,7 @@ export async function onShellCommand(shellCommand: string, projectId: string, pr
                 content: `Running command ${command}`,
                 projectId,
                 promptId,
+                type: "COMMAND"
             }
         })
     }
@@ -55,6 +57,7 @@ export async function onDescription(description: string, projectId: string, prom
             content: description,
             projectId,
             promptId,
+            type: "MESSAGE"
         }
     })
 

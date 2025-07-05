@@ -4,6 +4,7 @@ export class ArtifactProcessor {
     private onShellCommand: (shellCommand: string) => void;
     private processedUpTo: number = 0;
     private onDescription: (description: string) => void;
+    private lastDescriptionEndIndex: number = 0;
 
     private currentAction: {
         type: string;
@@ -31,42 +32,37 @@ export class ArtifactProcessor {
     }
 
     parse(): void {
-        // Process the descriptive text first
-        this.processDescriptiveText();
-
         // First process any completed actions
         this.processCompletedActions();
         
         // Then handle any ongoing action
         this.processOngoingAction();
         
-        // Finally look for new actions that might have started
+        // Then look for new actions that might have started
         this.detectNewAction();
+        
+        // Finally process any remaining descriptive text (only complete descriptions)
+        this.processDescriptiveText();
     }
 
     private processDescriptiveText(): void {
-        // Find the first tag in the content
-        const firstTagIndex = this.currentArtifact.indexOf('<bolt');
+        // Find the next boltAction tag in the unprocessed content (not boltArtifact)
+        const nextTagIndex = this.currentArtifact.indexOf('<boltAction', this.lastDescriptionEndIndex);
         
-        // If there's text before the first tag, process it as description
-        if (firstTagIndex > this.processedUpTo) {
-            const description = this.currentArtifact.slice(this.processedUpTo, firstTagIndex)
-                .trim();
-                
-            if (description.length > 0) {
-                this.onDescription(description);
+        // If there's a next boltAction tag, process description up to that tag
+        if (nextTagIndex !== -1) {
+            if (nextTagIndex > this.lastDescriptionEndIndex) {
+                const description = this.currentArtifact.slice(this.lastDescriptionEndIndex, nextTagIndex).trim();
+                if (description.length > 0) {
+                    this.onDescription(description);
+                }
+                this.lastDescriptionEndIndex = nextTagIndex;
             }
-            
-            this.processedUpTo = firstTagIndex;
+            return;
         }
-        // If no tags found but we have content, process it all as description
-        else if (firstTagIndex === -1 && this.currentArtifact.length > this.processedUpTo) {
-            const description = this.currentArtifact.slice(this.processedUpTo).trim();
-            if (description.length > 0) {
-                this.onDescription(description);
-            }
-            this.processedUpTo = this.currentArtifact.length;
-        }
+        
+        // If no more boltAction tags found, we need to check if we're at the end of the stream
+        // This will be handled in forceProcessRemaining() when the stream is complete
     }
 
     private processCompletedActions(): void {
@@ -82,6 +78,16 @@ export class ArtifactProcessor {
             // Skip if we've already processed this part
             if (startIndex < this.processedUpTo) {
                 continue;
+            }
+            
+            // Process any description before this action (excluding boltArtifact tags)
+            if (startIndex > this.lastDescriptionEndIndex) {
+                const potentialDescription = content.slice(this.lastDescriptionEndIndex, startIndex).trim();
+                const filteredDescription = this.filterOutBoltArtifactTags(potentialDescription);
+                
+                if (filteredDescription.length > 0) {
+                    this.onDescription(filteredDescription);
+                }
             }
             
             const attributes = this.parseAttributes(attributesStr);
@@ -103,7 +109,10 @@ export class ArtifactProcessor {
                 console.error('Error processing completed action:', error);
             }
             
-            this.processedUpTo = startIndex + fullMatch.length;
+            // Update processedUpTo and lastDescriptionEndIndex to the end of the matched action
+            const endIndex = startIndex + fullMatch.length;
+            this.processedUpTo = endIndex;
+            this.lastDescriptionEndIndex = endIndex;
         }
     }
     
@@ -133,7 +142,9 @@ export class ArtifactProcessor {
                     this.onFileContent(this.currentAction.filePath, actionContent);
                 }
                 
-                this.processedUpTo = closingTagIndex + '</boltAction>'.length;
+                const endIndex = closingTagIndex + '</boltAction>'.length;
+                this.processedUpTo = endIndex;
+                this.lastDescriptionEndIndex = endIndex;
             }
             this.currentAction = null;
         }
@@ -151,6 +162,20 @@ export class ArtifactProcessor {
         if (!attributes.type) return;
         
         const actionStartIndex = this.processedUpTo + content.indexOf(openingTagMatch[0]);
+        
+        // Process any description before this action starts (excluding boltArtifact tags)
+        if (actionStartIndex > this.lastDescriptionEndIndex) {
+            const potentialDescription = this.currentArtifact.slice(this.lastDescriptionEndIndex, actionStartIndex).trim();
+            
+            // Filter out boltArtifact tags from description
+            const filteredDescription = this.filterOutBoltArtifactTags(potentialDescription);
+            
+            if (filteredDescription.length > 0) {
+                this.onDescription(filteredDescription);
+            }
+            this.lastDescriptionEndIndex = actionStartIndex;
+        }
+        
         const contentStartIndex = actionStartIndex + openingTagMatch[0].length;
         
         this.currentAction = {
@@ -160,6 +185,14 @@ export class ArtifactProcessor {
             lastSentIndex: contentStartIndex,
             accumulatedContent: ''
         };
+    }
+
+    private filterOutBoltArtifactTags(text: string): string {
+        // Remove boltArtifact opening tags and closing tags
+        return text
+            .replace(/<boltArtifact[^>]*>/g, '')
+            .replace(/<\/boltArtifact>/g, '')
+            .trim();
     }
 
     private parseAttributes(attributesStr: string): Record<string, string> {
@@ -197,8 +230,19 @@ export class ArtifactProcessor {
             this.currentAction = null;
         }
         
+        // Process any remaining descriptive text (now that we know the stream is complete)
+        if (this.lastDescriptionEndIndex < this.currentArtifact.length) {
+            const potentialDescription = this.currentArtifact.slice(this.lastDescriptionEndIndex).trim();
+            const filteredDescription = this.filterOutBoltArtifactTags(potentialDescription);
+            
+            if (filteredDescription.length > 0) {
+                this.onDescription(filteredDescription);
+            }
+        }
+        
         this.currentArtifact = '';
         this.processedUpTo = 0;
+        this.lastDescriptionEndIndex = 0;
     }
 
     // Original utility methods remain unchanged
@@ -221,11 +265,13 @@ export class ArtifactProcessor {
     public clear() {
         this.currentArtifact = '';
         this.processedUpTo = 0;
+        this.lastDescriptionEndIndex = 0;
         this.currentAction = null;
     }
 
     public reset() {
         this.processedUpTo = 0;
+        this.lastDescriptionEndIndex = 0;
         this.currentAction = null;
     }
 
@@ -233,6 +279,7 @@ export class ArtifactProcessor {
         return {
             totalLength: this.currentArtifact.length,
             processedUpTo: this.processedUpTo,
+            lastDescriptionEndIndex: this.lastDescriptionEndIndex,
             currentAction: this.getCurrentAction(),
             pendingContent: this.getPendingContent()
         };

@@ -54,10 +54,17 @@ model Action {
   content       String
   projectId     String
   promptId      String
+  type          ActionType
   prompt        Prompt   @relation(fields: [promptId], references: [id])
 }
 
 enum PromptType {
   USER
   SYSTEM
+}
+
+enum ActionType {
+  FILE
+  COMMAND
+  MESSAGE
 }

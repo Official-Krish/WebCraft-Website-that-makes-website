@@ -26,7 +26,7 @@ export async function authMiddleware(
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "mysecret", {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "1234secret", {
       algorithms: ["HS256"],
     });
 

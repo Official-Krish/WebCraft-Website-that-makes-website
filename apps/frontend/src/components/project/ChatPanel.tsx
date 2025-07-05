@@ -8,6 +8,7 @@ import axios from 'axios';
 import { BACKEND_URL } from '../../config';
 import { Badge } from '../ui/badge';
 import { ScrollArea } from '../ui/scroll-area';
+import { TypingText } from './TypingText';
 
 export interface Message {
   id: string;
@@ -15,7 +16,6 @@ export interface Message {
   isUser: boolean;
   timestamp: string;
 }
-
 
 interface Prompt {
   id: string;
@@ -29,8 +29,8 @@ interface Action {
   id: string;
   createdAt: Date;
   content: string;
+  type: "MESSAGE" | "FILE" | "COMMAND";
 }
-
 
 export const ChatPanel = ({ projectId, workerUrl }: { projectId: string, workerUrl: string }) => {
   const [input, setInput] = useState('');
@@ -179,24 +179,67 @@ export const ChatPanel = ({ projectId, workerUrl }: { projectId: string, workerU
                               </Badge>
                             </div>
                             <div className="space-y-2">
-                              {prompt.actions.map((action) => (
-                                <motion.div
-                                  key={action.id}
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  className="flex items-start gap-3 p-3 bg-card border border-border rounded-lg hover:bg-muted/30 transition-colors"
-                                >
-                                  <div className="flex items-center justify-center mt-0.5">
-                                    {getStatusIcon(action.content)}
-                                  </div>
-                                  <div className="flex-1">
-                                    <p className="text-sm leading-relaxed">{action.content}</p>
-                                    <span className="text-xs text-muted-foreground">
-                                      {new Date(action.createdAt).toLocaleTimeString()}
-                                    </span>
-                                  </div>
-                                </motion.div>
-                              ))}
+                              {prompt.actions.map((action, actionIndex) => {
+                                if (action.type === "MESSAGE") {
+                                  return (
+                                    <motion.div
+                                      key={action.id}
+                                      initial={{ opacity: 0, x: -10 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{ delay: actionIndex * 0.2 }}
+                                      className="flex items-start gap-3 p-4 bg:from-blue-950/20 to-indigo-950/20 border border-blue-800 rounded-lg hover:from-blue-900/30 hover:to-indigo-900/30 transition-all duration-200 shadow-sm"
+                                    >
+                                      <div className="flex items-center justify-center mt-0.5">
+                                        <motion.div
+                                          animate={{ 
+                                            scale: [1, 1.2, 1],
+                                            rotate: [0, 180, 360]
+                                          }}
+                                          transition={{ 
+                                            duration: 2,
+                                            repeat: Infinity,
+                                            ease: "easeInOut"
+                                          }}
+                                        >
+                                          <Bot className="w-4 h-4 text-blue-400" />
+                                        </motion.div>
+                                      </div>
+                                      <div className="flex-1">
+                                        <div className="text-sm leading-relaxed text-blue-100">
+                                          <TypingText 
+                                            text={action.content} 
+                                            delay={actionIndex * 500}
+                                          />
+                                        </div>
+                                        <span className="text-xs text-blue-400 mt-1 block">
+                                          {new Date(action.createdAt).toLocaleTimeString()}
+                                        </span>
+                                      </div>
+                                    </motion.div>
+                                  );
+                                } else if (action.type === "FILE" || action.type === "COMMAND") {
+                                  return (
+                                    <motion.div
+                                      key={action.id}
+                                      initial={{ opacity: 0, x: -10 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{ delay: actionIndex * 0.2 }}
+                                      className="flex items-start gap-3 p-3 bg-card border border-border rounded-lg hover:bg-muted/30 transition-colors"
+                                    >
+                                      <div className="flex items-center justify-center mt-0.5">
+                                        {getStatusIcon(action.content)}
+                                      </div>
+                                      <div className="flex-1">
+                                        <p className="text-sm leading-relaxed">{action.content}</p>
+                                        <span className="text-xs text-muted-foreground">
+                                          {new Date(action.createdAt).toLocaleTimeString()}
+                                        </span>
+                                      </div>
+                                    </motion.div>
+                                  );
+                                }
+                                return null;
+                              })}
                             </div>
                           </div>
                         </div>

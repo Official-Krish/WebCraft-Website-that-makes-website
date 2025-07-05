@@ -299,13 +299,12 @@ async function assignPodToProject(projectId: string) {
             console.log(stderr);
         }
     )
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    
     console.log("Pod is ready finally");
     console.log(stdout);
     console.log(stderr);
     await createIngressForProject(projectId);
     console.log("Ingress created for project");
-    await new Promise(resolve => setTimeout(resolve, 10000));
 }
 
 app.use(express.json());

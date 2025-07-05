@@ -17,10 +17,6 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
-  
-app.set('trust proxy', 1);
-
-app.options('*', cors());
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY || "",
