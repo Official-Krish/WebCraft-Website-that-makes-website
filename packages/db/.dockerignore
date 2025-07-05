@@ -1,2 +1,9 @@
-.env
 node_modules
+dist
+coverage
+*.log
+*.env
+*.tsbuildinfo
+*.tgz
+*.md
+.env
