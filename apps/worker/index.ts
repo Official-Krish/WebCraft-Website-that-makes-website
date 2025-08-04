@@ -6,7 +6,7 @@ import { ArtifactProcessor } from './utils/parser';
 import { onDescription, onFileUpdate, onPromptEnd, onPromptStart, onShellCommand } from './utils/os';
 import { authMiddleware } from './middleware';
 import prisma from "@repo/db/client";
-import OpenAI from "openai";
+import { GoogleGenAI } from "@google/genai";
 
 const app = express();
 app.use(express.json());
@@ -18,9 +18,8 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || "",
-    baseURL: process.env.OPENAI_API_BASE_URL || "",
+const ai = new GoogleGenAI({
+    apiKey: process.env.GOOGLE_GENAI_API_KEY
 });
 
 
@@ -43,9 +42,6 @@ app.post("/api/v1/AI/chat", authMiddleware, async (req, res) => {
             return;
         }
 
-        // Combine user prompt with system prompt
-        // const prompt = `${userPrompt}`.trim();
-
         const prompt = userPrompt;
 
         const promptDb = await prisma.prompt.create({
@@ -67,15 +63,11 @@ app.post("/api/v1/AI/chat", authMiddleware, async (req, res) => {
 
         let responseText = "";
 
-        const stream = await openai.chat.completions.create({
-            model: "shivaay",
-            messages: [
-                { role: "system", content: getSystemPrompt() },
-                {role: "system", content: "If user doesnt specify file format in which they wants code, then always return code in typescript format (tsx or ts), for example: build a todo website, then give the code in typescript not in javascript. If user explicitly asks for javascript, then only return code in javascript format (js or jsx)."},
-                { role: "user", content: allPrompts.map((p: any) => p.content).join("\n") + `\n\n${prompt}` },
-            ],
-            stream: true,
-            max_tokens: 10000,
+        const response = await ai.models.generateContentStream({
+            model: "gemini-2.5-pro",
+            contents: {
+                text: getSystemPrompt() + "\n\n" + allPrompts.map((p: any) => p.content).join("\n") + `\n\n${prompt}`
+            },
         });
 
         let artifactProcessor = new ArtifactProcessor(
@@ -86,8 +78,8 @@ app.post("/api/v1/AI/chat", authMiddleware, async (req, res) => {
         )
 
         onPromptStart();
-        for await (const chunk of stream) {
-            const data = chunk.choices[0].delta.content;
+        for await (const chunk of response) {
+            const data = chunk.text;
             if (!data) continue; 
             responseText += data;
             artifactProcessor.append(data);
