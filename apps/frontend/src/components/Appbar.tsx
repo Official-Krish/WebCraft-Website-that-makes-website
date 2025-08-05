@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion,  } from 'framer-motion';
 import { Crown } from 'lucide-react';
 import UserProfileDropdown from './UserDropdown';
 import { useEffect, useState } from 'react';
@@ -40,8 +40,12 @@ const Appbar = () => {
 
   return (
     <motion.header 
-      className="fixed top-0 right-0 left-0 bg-black/80 backdrop-blur-lg border-b border-gray-800 z-20"
+      className="fixed top-0 right-0 left-0 bg-black/80 backdrop-blur-lg border-b border-gray-800 z-20 rounded-xl"
       variants={headerVariants}
+      transition={{
+        duration: 0.3,
+        ease: "easeInOut"
+      }}
       initial="hidden"
       animate="visible"
     >

@@ -18,6 +18,7 @@ export const Project = () => {
   const [sessionUrl, setSessionUrl] = useState<string | null>("http://localhost:8080");
   const [Loading, setLoading] = useState(false);
   const [hideChat, setHideChat] = useState(false);
+  const [files, setFiles] = useState<any[]>([]);
   
   const { projectId: urlProjectId } = useParams(); 
   const [searchParams] = useSearchParams();
@@ -48,14 +49,29 @@ export const Project = () => {
         return;
       }
       if(prompt){
-        axios.post(`${workerUrl}/api/v1/AI/chat`, {
-          prompt: prompt,
-          projectId: projectId,
-        }, {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
-        })  
+        try {
+          const res = await axios.post(`${workerUrl}/api/v1/AI/chat`, {
+            prompt: prompt,
+            projectId: projectId,
+          }, {
+            headers: {
+              Authorization: `${localStorage.getItem("token")}`,
+            },
+          })  
+          setFiles(res.data.response)
+        } catch (error) {
+          console.error("Error sending prompt to worker:", error);
+          toast.error("Failed to send prompt to worker. Please try again later.", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
       }
       setLoading(false);
     } catch (error) {
@@ -74,7 +90,7 @@ export const Project = () => {
       setSessionUrl(null);
       setPreviewUrl(null);
       console.error("Error fetching iframe URL:", error);
-      window.location.href = "/";
+      // window.location.href = "/";
     }
   }
 
@@ -86,7 +102,7 @@ export const Project = () => {
       <div>
           <GridBackground>
               <div>
-                {!hideChat && <AppBar title={prompt || "WebcraftAI Project"} /> }
+                {!hideChat && <AppBar title={prompt || "WebcraftAI Project"} files={files}/> }
                 {Loading && <div className="flex items-center justify-center h-full">
                   <div className="animate-spin rounded-full border-t-2 border-b-2 border-primary/50 h-24 w-24 border-solid"></div>
                 </div>}

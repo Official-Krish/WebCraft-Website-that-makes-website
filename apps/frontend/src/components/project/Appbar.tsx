@@ -1,9 +1,87 @@
 import { motion } from 'framer-motion';
 import { Lock, Settings, Rocket } from 'lucide-react';
 import { CiExport } from "react-icons/ci";
+import { GitHubAuth } from '../../lib/GithubAuth';
+import { useState } from 'react';
+import { BACKEND_URL } from '../../config';
+import { toast } from 'react-toastify';
+import { getFilesForGitHub } from '../../utils/githubParser';
 
+const AppBar = ({ title, files }: {title:  string, files: any[]}) => {
+    const { isConnected, initiateAuth } = GitHubAuth();
+    const [isExporting, setIsExporting] = useState(false);
 
-const AppBar = ({ title }: {title:  string}) => {
+    const handleExport = async () => {
+        if (!isConnected) {
+          initiateAuth();
+          return;
+        }
+    
+        setIsExporting(true);
+    
+        try {
+          // Parse the files array to extract boltArtifact blocks
+          const artifacts = files
+            .filter(file => file.content && typeof file.content === 'string')
+            .map(file => file.content);
+          
+          // Use the GitHub parser to extract files and prepare for export
+          const githubFiles = getFilesForGitHub(artifacts);
+    
+          const response = await fetch(`${BACKEND_URL}/github/create-repo`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              name: `webcraft-export-${title}-${Date.now()}`,
+              description: `Exported project from WebcraftAI on ${new Date().toLocaleDateString()}`,
+              files: githubFiles,
+            })
+          });
+    
+          const result = await response.json();
+    
+          if (response.ok) {
+            toast.success(`Export successful!`, {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "dark"
+            });
+          } else {
+            toast.error(`Export failed: ${result.message}`, {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "dark"
+            });
+          }
+        } catch (error) {
+          console.error('Export error:', error);
+          toast.error('Export failed. Please try again later.', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark"
+          });
+        } finally {
+          setIsExporting(false);
+        }
+    };
     return (
         <motion.div 
             className="bg-black border-b border-gray-800 z-50"
@@ -52,9 +130,11 @@ const AppBar = ({ title }: {title:  string}) => {
                         className="flex items-center gap-2 text-gray-300 hover:text-white px-3 py-2 rounded-lg hover:bg-gray-900 transition-all"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
+                        disabled={isExporting}
+                        onClick={handleExport}
                     >
                         <CiExport size={16} />
-                        <span className="text-sm">Export</span>
+                        <span className="text-sm">{isExporting ? "Exporting..." : "Export"}</span>
                     </motion.button>
 
                     {/* Deploy */}
