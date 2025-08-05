@@ -1,11 +1,13 @@
-FROM oven/bun:latest
+FROM node:iron-bullseye
 
 WORKDIR /app
+
+# Install Bun
+RUN npm install -g bun
 
 COPY ./apps/primary-backend/ ./apps/primary-backend
 COPY ./packages/ ./packages
 COPY package.json .
-COPY turbo.json .
 COPY bun.lock .
 
 RUN bun install

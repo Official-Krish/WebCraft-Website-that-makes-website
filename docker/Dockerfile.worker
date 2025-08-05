@@ -1,6 +1,8 @@
-FROM oven/bun:latest
+FROM node:iron-bullseye
 
-WORKDIR /app/
+WORKDIR /app
+
+RUN npm install -g bun
 
 COPY ./apps/worker/ ./apps/worker
 

@@ -40,10 +40,10 @@ RUN code-server --install-extension /tmp/webcraft-listener-0.0.1.vsix
 # Install One Dark Pro theme extension
 RUN code-server --install-extension zhuangtongfa.Material-theme
 
-# Configure VS Code settings with One Dark Pro theme
+# Configure VS Code settings with One Dark Pro theme and disable workspace trust
 RUN mkdir -p /home/coder/.local/share/code-server/User
 
-RUN echo '{\n  "workbench.colorTheme": "One Dark Pro",\n  "workbench.preferredDarkColorTheme": "One Dark Pro",\n  "window.autoDetectColorScheme": false,\n  "workbench.colorCustomizations": {},\n  "editor.theme": "One Dark Pro"\n}' > /home/coder/.local/share/code-server/User/settings.json
+RUN echo '{\n  "workbench.colorTheme": "One Dark Pro",\n  "workbench.preferredDarkColorTheme": "One Dark Pro",\n  "window.autoDetectColorScheme": false,\n  "workbench.colorCustomizations": {},\n  "editor.theme": "One Dark Pro",\n  "security.workspace.trust.enabled": false,\n  "security.workspace.trust.startupPrompt": "never",\n  "security.workspace.trust.banner": "never",\n  "security.workspace.trust.emptyWindow": false\n}' > /home/coder/.local/share/code-server/User/settings.json
 
 # Expose code-server's default ports
 EXPOSE 8080
